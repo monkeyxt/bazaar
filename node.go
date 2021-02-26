@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/rpc"
 
 	"gopkg.in/yaml.v2"
 )
@@ -82,6 +83,66 @@ func (bnode *BazaarNode) lookupProduct(productName string, hopcount int, sellerI
 	// for peer, addr := range bnode.config.Peers {
 	// TODO: call lookp rpc with hopcount - 1 and the product name
 	// }
+
+	return nil
+}
+
+// Reply relays the message back to the buyer
+func (bnode *BazaarNode) Reply(args ReplyArgs, reply *ReplyResponse) error {
+	log.Printf("Replying to the previous node %d with message from seller %d", args.RouteList[0], args.SellerID)
+	return bnode.replyBuyer(args.RouteList, args.SellerID)
+}
+
+// ReplyArgs contains the RPC arguments for reply, which is the backtracking list
+// and the sellerid to be returned
+type ReplyArgs struct {
+	RouteList []int
+	SellerID  int
+}
+
+// ReplyResponse is empty because no response is required.
+type ReplyResponse struct {
+}
+
+// Reply message with the peerId of the seller
+func (bnode *BazaarNode) replyBuyer(routeList []int, sellerID int) error {
+
+	// idList: a list of ids to traverse back to the original sender
+	// sellerID: id of the seller who responds
+
+	if len(routeList) == 1 {
+
+		// Reached original sender
+		log.Printf("%d got a match reply from %d ", routeList[0], sellerID)
+
+		// TODO: add sellerID to list of sellers for the buyer to randomly pick from
+
+	} else {
+
+		var recepientID int
+		recepientID, routeList = routeList[len(routeList)-1], routeList[:len(routeList)-1]
+
+		// TODO: perform reply RPC call on the next node
+		for peer, addr := range bnode.config.Peers {
+
+			if peer == recepientID {
+
+				con, err := rpc.DialHTTP("tcp", addr)
+				if err != nil {
+					log.Fatalln("dailing error: ", err)
+				}
+
+				req := ReplyArgs{routeList, sellerID}
+				var res ReplyResponse
+
+				err = con.Call("node.Reply", req, &res)
+				if err != nil {
+					log.Fatalln("reply error: ", err)
+				}
+
+			}
+		}
+	}
 
 	return nil
 }
