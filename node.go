@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/rpc"
+	"strconv"
 
 	"gopkg.in/yaml.v2"
 )
@@ -12,6 +14,11 @@ import (
 // BazaarNode contains the state for the node.
 type BazaarNode struct {
 	config NodeConfig
+}
+
+// BazaarServer exposes methods for letting a node listen for RPC
+type BazaarServer struct {
+	node *BazaarNode
 }
 
 // CreateNodeFromConfigFile loads initial node state from a config file passed as
@@ -122,27 +129,53 @@ func (bnode *BazaarNode) replyBuyer(routeList []int, sellerID int) error {
 		var recepientID int
 		recepientID, routeList = routeList[len(routeList)-1], routeList[:len(routeList)-1]
 
-		// TODO: perform reply RPC call on the next node
-		for peer, addr := range bnode.config.Peers {
+		addr := bnode.config.Peers[recepientID]
 
-			if peer == recepientID {
-
-				con, err := rpc.DialHTTP("tcp", addr)
-				if err != nil {
-					log.Fatalln("dailing error: ", err)
-				}
-
-				req := ReplyArgs{routeList, sellerID}
-				var res ReplyResponse
-
-				err = con.Call("node.Reply", req, &res)
-				if err != nil {
-					log.Fatalln("reply error: ", err)
-				}
-
-			}
+		con, err := rpc.DialHTTP("tcp", addr)
+		if err != nil {
+			log.Fatalln("dailing error: ", err)
 		}
+
+		req := ReplyArgs{routeList, sellerID}
+		var res ReplyResponse
+
+		err = con.Call("node.Reply", req, &res)
+		if err != nil {
+			log.Fatalln("reply error: ", err)
+		}
+
 	}
 
 	return nil
+}
+
+// ListenRPC listens on RPC for all methods on the desired listener. To stop
+// listening, one passes a bool to the stopChannel or closes stopChannel. This
+// method should be run in a goroutine. The listener passed will be closed if
+// something stopChannel receives a message.
+func (server *BazaarServer) ListenRPC(stopChannel chan bool) {
+
+	addr := net.JoinHostPort("", strconv.Itoa(server.node.config.NodePort))
+	listener, err := net.Listen("tcp", addr)
+	if err != nil {
+		log.Fatalf("Error listening for RPC: %s", err)
+		return
+	}
+
+	rpcServer := rpc.NewServer()
+	rpcServer.Register(server.node)
+
+	defer func() {
+		log.Printf("Closing %s listener for %s...\n", listener.Addr().Network(), listener.Addr().String())
+		listener.Close()
+	}()
+
+	// listen in goroutine so we can block until receiving a message in
+	// stopChannel
+	go rpcServer.Accept(listener)
+
+	// wait until something is in stopchannel or it is closed
+	<-stopChannel
+
+	return
 }

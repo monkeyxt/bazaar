@@ -48,7 +48,6 @@ func TestLookupSimple(t *testing.T) {
 		return
 	}
 
-	return
 }
 
 // TestReplySimple tests that a reply connection can be made
@@ -74,5 +73,87 @@ func TestReplySimple(t *testing.T) {
 		return
 	}
 
-	return
+}
+
+const nodeA string = `
+peers:
+  0: localhost:10000
+role: "buyer"
+items:
+  - item: "salt"
+    amount: 1
+    unlimited: false
+  - item: "boars"
+    amount: 1
+    unlimited: true
+  - item: "fish"
+    amount: 1
+    unlimited: false
+
+maxpeers: 1
+maxhops: 1
+nodeid: 1
+nodeport: 10001
+`
+
+const nodeB string = `
+peers:
+  1: localhost:10001
+role: "seller"
+items:
+  - item: "salt"
+    amount: 1
+    unlimited: false
+  - item: "boars"
+    amount: 1
+    unlimited: true
+  - item: "fish"
+    amount: 1
+    unlimited: false
+
+maxpeers: 1
+maxhops: 1
+nodeid: 0
+nodeport: 10000
+`
+
+// TestReplySimpleRPC tests that the reply method correctly responds through
+// RPC.
+func TestReplySimpleRPC(t *testing.T) {
+
+	// create testnode from test config
+	testNodeA, err := CreateNodeFromConfigFile([]byte(nodeA))
+	if err != nil {
+		t.Fatalf("Error configuring node A for test rpc call: %s", err)
+		return
+	}
+
+	// create testnode from test config
+	testNodeB, err := CreateNodeFromConfigFile([]byte(nodeB))
+	if err != nil {
+		t.Fatalf("Error configuring node B for test rpc call: %s", err)
+		return
+	}
+
+	t.Logf("listening on rpc\n")
+
+	// now we listen on the node's config port
+	stopChan := make(chan bool, 1)
+	serverB := &BazaarServer{node: testNodeB}
+	go serverB.ListenRPC(stopChan)
+
+	args := ReplyArgs{
+		RouteList: []int{1},
+		SellerID:  0,
+	}
+
+	var rpcResponse ReplyResponse
+	err = testNodeA.Reply(args, &rpcResponse)
+	if err != nil {
+		t.Fatalf("error replying: %s", err)
+		return
+	}
+
+	// clean up channel
+	close(stopChan)
 }
