@@ -96,8 +96,13 @@ func (bnode *BazaarNode) lookupProduct(productName string, hopcount int, sellerI
 
 // Reply relays the message back to the buyer
 func (bnode *BazaarNode) Reply(args ReplyArgs, reply *ReplyResponse) error {
-	log.Printf("Replying to the previous node %d with message from seller %d", args.RouteList[0], args.SellerID)
-	return bnode.replyBuyer(args.RouteList, args.SellerID)
+	if len(args.RouteList) == 1 {
+		log.Printf("Message at final hop: node %d with message from seller node %d", args.RouteList[len(args.RouteList)-1], args.SellerID)
+	} else {
+		log.Printf("Forward reply to node %d with message from seller node %d", args.RouteList[len(args.RouteList)-2], args.SellerID)
+	}
+
+	return bnode.reply(args.RouteList, args.SellerID)
 }
 
 // ReplyArgs contains the RPC arguments for reply, which is the backtracking list
@@ -112,22 +117,33 @@ type ReplyResponse struct {
 }
 
 // Reply message with the peerId of the seller
-func (bnode *BazaarNode) replyBuyer(routeList []int, sellerID int) error {
+func (bnode *BazaarNode) reply(routeList []int, sellerID int) error {
 
-	// idList: a list of ids to traverse back to the original sender
+	// routeList: a list of ids to traverse back to the original sender in the format of
+	//         [1, 5, 2, 6], so the reverse traversal path should be 6 --> 2 --> 5 --> 1
+
 	// sellerID: id of the seller who responds
 
 	if len(routeList) == 1 {
 
-		// Reached original sender
-		log.Printf("%d got a match reply from %d ", routeList[0], sellerID)
+		// Reached original sender, add the sellerID to a list for the buyer to randomly
+		// choose from.
+		log.Printf("Node %d got a match reply from node %d ", bnode.config.NodeID, sellerID)
 
-		// TODO: add sellerID to list of sellers for the buyer to randomly pick from
+		var tempSellerList []int
+		tempSellerList = append([]int{sellerID}, tempSellerList...)
+
+		// Remove duplicate sellers from the list
+		bnode.config.SellerList = unique(tempSellerList)
+		log.Printf("Current seller list: %v", bnode.config.SellerList)
 
 	} else {
 
 		var recepientID int
-		recepientID, routeList = routeList[len(routeList)-1], routeList[:len(routeList)-1]
+		recepientID, routeList = routeList[len(routeList)-2], routeList[:len(routeList)-1]
+
+		log.Printf("Current recepent ID: %d: ", recepientID)
+		log.Printf("Current routing List %v: ", routeList)
 
 		addr := bnode.config.Peers[recepientID]
 
@@ -147,6 +163,80 @@ func (bnode *BazaarNode) replyBuyer(routeList []int, sellerID int) error {
 	}
 
 	return nil
+}
+
+// TransactionArgs contains the RPC arguments for buy. CurrentTarget is the
+// what the buyer wishes to buy during this transaction
+type TransactionArgs struct {
+	CurrentTarget string
+}
+
+// TransactionResponse is empty for now
+type TransactionResponse struct {
+}
+
+// Buy item directly from the seller with RCP call
+func (bnode *BazaarNode) buy(sellerID int) error {
+
+	log.Printf("Node %d buying from seller node %d", bnode.config.NodeID, sellerID)
+
+	addr := bnode.config.Peers[sellerID]
+
+	con, err := rpc.DialHTTP("tcp", addr)
+	if err != nil {
+		log.Fatalln("dailing error: ", err)
+	}
+
+	req := TransactionArgs{bnode.config.Target}
+	var res TransactionResponse
+
+	err = con.Call("node.Sell", req, &res)
+	if err != nil {
+		log.Fatalln("reply error: ", err)
+	}
+
+	return nil
+
+}
+
+// Sell runs the sell command
+func (bnode *BazaarNode) Sell(args TransactionArgs, reply *TransactionResponse) error {
+	log.Printf("Seller node %d selling item %s", bnode.config.NodeID, args.CurrentTarget)
+	return bnode.sell(args.CurrentTarget)
+}
+
+func (bnode *BazaarNode) sell(target string) error {
+
+	// target: the requested item by the buyer
+
+	// Extract the itemID for the requested item
+	var targetID int
+	for itemID := range bnode.config.Items {
+		if bnode.config.Items[itemID].Item == target {
+			targetID = itemID
+		}
+	}
+
+	// In the case of unlimted item. Nothing to do, return nil.
+	if bnode.config.Items[targetID].Unlimited == true {
+		log.Printf("Seller node %d sold %s", bnode.config.NodeID, bnode.config.Items[targetID].Item)
+		return nil
+	}
+
+	// Complete the transaction
+	bnode.config.Mu.Lock()
+	if bnode.config.Items[targetID].Amount > 0 {
+		bnode.config.Items[targetID].Amount--
+		log.Printf("Seller node %d sold %s, amount remaining %d", bnode.config.NodeID, bnode.config.Items[targetID].Item, bnode.config.Items[targetID].Amount)
+	} else {
+
+		// TODO: Item sold out. Pick another item to sell
+
+	}
+	bnode.config.Mu.Unlock()
+
+	return nil
+
 }
 
 // ListenRPC listens on RPC for all methods on the desired listener. To stop
@@ -178,4 +268,17 @@ func (server *BazaarServer) ListenRPC(stopChannel chan bool) {
 	<-stopChannel
 
 	return
+}
+
+// unique is a function to de-duplicate the seller list
+func unique(intSlice []int) []int {
+	keys := make(map[int]bool)
+	list := []int{}
+	for _, entry := range intSlice {
+		if _, value := keys[entry]; !value {
+			keys[entry] = true
+			list = append(list, entry)
+		}
+	}
+	return list
 }

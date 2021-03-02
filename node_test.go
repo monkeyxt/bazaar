@@ -50,31 +50,6 @@ func TestLookupSimple(t *testing.T) {
 
 }
 
-// TestReplySimple tests that a reply connection can be made
-func TestReplySimple(t *testing.T) {
-
-	// create testnode from test config
-	testnode, err := CreateNodeFromConfigFile([]byte(testingConfig))
-	if err != nil {
-		t.Fatalf("Error configuring node for test rpc call: %s", err)
-		return
-	}
-
-	args := ReplyArgs{
-		RouteList: []int{0},
-		SellerID:  0,
-	}
-
-	var rpcResponse ReplyResponse
-	err = testnode.Reply(args, &rpcResponse)
-
-	if err != nil {
-		t.Fatalf("Error calling reply on testnode: %s", err)
-		return
-	}
-
-}
-
 const nodeA string = `
 peers:
   0: localhost:10000
@@ -156,4 +131,22 @@ func TestReplySimpleRPC(t *testing.T) {
 
 	// clean up channel
 	close(stopChan)
+}
+
+func TestBuySimple(t *testing.T) {
+
+	// create testnode from test config
+	testnode, err := CreateNodeFromConfigFile([]byte(testingConfig))
+	if err != nil {
+		t.Fatalf("Error configuring node for test rpc call: %s", err)
+		return
+	}
+
+	transactionArgs := TransactionArgs{"salt"}
+	var transactionResponse TransactionResponse
+	err = testnode.Sell(transactionArgs, &transactionResponse)
+	if err != nil {
+		t.Fatalf("error selling: %s", err)
+		return
+	}
 }

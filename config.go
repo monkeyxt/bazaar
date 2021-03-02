@@ -1,5 +1,7 @@
 package main
 
+import "sync"
+
 // NodeConfig includes a list of peers, node role, a list of items (with
 // amounts), and a maximum number of peers to connect to.
 type NodeConfig struct {
@@ -15,6 +17,15 @@ type NodeConfig struct {
 
 	// NodePort is the port for the node to listen on for RPC
 	NodePort int `yaml:"nodeport"`
+
+	// SellerList is a list of sellers for the buyer to choose from
+	SellerList []int
+
+	// Mu is the mutex lock for the current node
+	Mu sync.Mutex
+
+	// Taget is the item that the buyer wishes to buy
+	Target string
 }
 
 // ItemAmount is an item, associated amount, and an Unlimited setting. If
