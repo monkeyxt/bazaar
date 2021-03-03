@@ -297,12 +297,14 @@ func (bnode *BazaarNode) sell(target string) error {
 	// Complete the transaction
 	bnode.config.Mu.Lock()
 	if bnode.config.Items[targetID].Amount > 0 {
+
 		bnode.config.Items[targetID].Amount--
 		log.Printf("Seller node %d sold %s, amount remaining %d", bnode.config.NodeID, bnode.config.Items[targetID].Item, bnode.config.Items[targetID].Amount)
+
 	} else {
 
 		// If the item is defined to be unlimited in the YAML file restock the item and purchase again
-		if bnode.config.Items[targetID].Unlimited {
+		if bnode.config.Items[targetID].Unlimited == true {
 
 			bnode.config.Items[targetID].Amount += 10
 			log.Printf("Seller node %d restocked %s", bnode.config.NodeID, bnode.config.Items[targetID].Item)
@@ -312,8 +314,16 @@ func (bnode *BazaarNode) sell(target string) error {
 
 		} else {
 
-			// TODO: Item sold out. Pick another item to sell
+			// Item sold out. Pick another item randomly to sell
+			var commodity []string
+			for itemID := range bnode.config.Items {
+				if bnode.config.Items[itemID].Amount != 0 {
+					commodity = append(commodity, bnode.config.Items[itemID].Item)
+				}
+			}
 
+			bnode.config.SellerTarget = commodity[rand.Intn(len(commodity))]
+			log.Printf("Seller node %d now selling %s", bnode.config.NodeID, bnode.config.SellerTarget)
 		}
 
 	}
