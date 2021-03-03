@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net"
 	"net/rpc"
 	"strconv"
@@ -45,7 +46,44 @@ func CreateNodeFromConfigFile(configFile []byte) (*BazaarNode, error) {
 		return nil, fmt.Errorf("too many peers in the peers list. There are %d, the maximum is %d", len(node.config.Peers), node.config.MaxPeers)
 	}
 
+	// NOTE: project wasnt specific on how to select seller items, so we pick at
+	// random
+	// set the sellertarget depending on the available items
+	availableItems, err := GetAvailableItems(&node)
+	if err != nil {
+		return nil, fmt.Errorf("error getting available items when loading config: %s", err)
+	}
+
+	// if available items is empty just pick from len(items)
+	var randItemIdx int
+	if len(availableItems) == 0 {
+		randItemIdx = rand.Intn(len(node.config.Items))
+	} else {
+		// pick item at random from the list of available items
+		randItemIdx = rand.Intn(len(availableItems))
+	}
+
+	// set the seller target to the randomly selected item
+	node.config.SellerTarget = node.config.Items[randItemIdx].Item
+
 	return &node, nil
+}
+
+// GetAvailableItems returns all items available for the given node.
+// It returns an error if the list of items is empty.
+func GetAvailableItems(bnode *BazaarNode) ([]string, error) {
+	if len(bnode.config.Items) == 0 {
+		return nil, fmt.Errorf("bazaar node has no items, so none can be available")
+	}
+
+	var items []string
+	for _, item := range bnode.config.Items {
+		if item.Unlimited || item.Amount > 0 {
+			items = append(items, item.Item)
+		}
+	}
+
+	return items, nil
 }
 
 // CreateNodeFromConfigPath loads initial node state from a config at a certain
@@ -74,23 +112,21 @@ type LookupResponse struct {
 
 // Lookup runs the lookup command.
 func (bnode *BazaarNode) Lookup(args LookupArgs, reply *LookupResponse) error {
-	log.Printf("Looking for %d with lookup for %s", args.BuyerID, args.ProductName)
+	log.Printf("Node %d is looking for %d with lookup for %s", bnode.config.NodeID, args.BuyerID, args.ProductName)
 	return bnode.lookupProduct(args.Route, args.ProductName, args.HopCount, args.BuyerID)
 }
 
 // lookupProduct takes in a product name and hopcount, and runs the lookup procedure.
 func (bnode *BazaarNode) lookupProduct(route []int, productName string, hopcount int, buyerID int) error {
 
+	if bnode.config.Role == "seller" && bnode.config.SellerTarget == productName {
+		bnode.reply(route, bnode.config.NodeID)
+	}
+
 	log.Printf("Node %d received lookup request from %d\n", bnode.config.NodeID, buyerID)
 	if hopcount == 0 {
-		if bnode.config.Role == "buyer" {
-			return nil
-		}
-
-		// invariant: this node is a seller since it's not a buyer
-		if bnode.config.Target == productName {
-			bnode.reply(route, bnode.config.NodeID)
-		}
+		log.Printf("Node %d is discarding lookup request for %s\n", bnode.config.NodeID, productName)
+		return nil
 	}
 
 	// make sure we are done with all calls before we return
@@ -106,12 +142,10 @@ func (bnode *BazaarNode) lookupProduct(route []int, productName string, hopcount
 		go func(peerAddr string) {
 			defer wg.Done()
 
-			log.Printf("enter func, dialing peer with addr %s\n", peerAddr)
 			con, err := rpc.Dial("tcp", peerAddr)
 			if err != nil {
 				log.Fatalln("dailing error in lookup: ", err)
 			}
-			log.Printf("done dialing")
 
 			req := LookupArgs{
 				ProductName: productName,
@@ -133,9 +167,9 @@ func (bnode *BazaarNode) lookupProduct(route []int, productName string, hopcount
 
 	}
 
-	log.Printf("Waiting for lookups to finish...\n")
+	log.Printf("Node %d is waiting for lookups to finish...\n", bnode.config.NodeID)
 	wg.Wait()
-	log.Printf("Done flooding peers with lookups for %s from %d...\n", productName, buyerID)
+	log.Printf("Node %d is done flooding peers with lookups for %s from %d...\n", bnode.config.NodeID, productName, buyerID)
 
 	return nil
 }

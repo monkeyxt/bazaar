@@ -24,8 +24,11 @@ type NodeConfig struct {
 	// Mu is the mutex lock for the current node
 	Mu sync.Mutex
 
-	// Taget is the item that the buyer wishes to buy
+	// Target is the item that the buyer wishes to buy
 	Target string
+
+	// SellerTarget is the item that the seller is currently selling
+	SellerTarget string
 }
 
 // ItemAmount is an item, associated amount, and an Unlimited setting. If

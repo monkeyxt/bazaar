@@ -274,7 +274,7 @@ func TestLookupLinearRPC(t *testing.T) {
 
 	args := LookupArgs{
 		ProductName: "salt",
-		HopCount:    testFirstNode.config.MaxHops,
+		HopCount:    testFirstNode.config.MaxHops - 1,
 		BuyerID:     testFirstNode.config.NodeID,
 		Route:       []int{testFirstNode.config.NodeID},
 	}
@@ -286,10 +286,11 @@ func TestLookupLinearRPC(t *testing.T) {
 		return
 	}
 
-	// clean up channel
-	close(thirdStopChan)
-	close(secondStopChan)
+	// clean up channels
 	close(firstStopChan)
+	close(secondStopChan)
+	close(thirdStopChan)
+
 	close(firstDoneChan)
 	close(secondDoneChan)
 	close(thirdDoneChan)
