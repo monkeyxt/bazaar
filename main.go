@@ -27,11 +27,14 @@ func main() {
 	server := &BazaarServer{
 		node: node,
 	}
+	go server.node.buyerLoop()
 	server.ListenRPC(stopChan, doneChan)
 
 }
 
-func (node *BazaarNode) buyerLoop(stopChan chan bool) {
+func (node *BazaarNode) buyerLoop() {
+	// wait before starting the buyer loop
+	time.Sleep(1 * time.Second)
 
 	for {
 
