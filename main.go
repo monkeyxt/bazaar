@@ -34,7 +34,7 @@ func main() {
 
 func (node *BazaarNode) buyerLoop() {
 	// wait before starting the buyer loop
-	time.Sleep(1 * time.Second)
+	time.Sleep(5 * time.Second)
 
 	for {
 

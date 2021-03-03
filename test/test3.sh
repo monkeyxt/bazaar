@@ -2,7 +2,7 @@
 # another to be a seller of boar. Ensure that nothing is sold. 
 
 # YAML generation for node 1
-export peer_id ="0"
+export peer_id="0"
 export peer_port="10000"
 export role="buyer"
 export salt_amount="0"

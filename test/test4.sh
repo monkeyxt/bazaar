@@ -1,11 +1,21 @@
-# Test Case 2 : Assign one peer to be a buyer of fish and 
-# another to be a seller of fish and boar. Ensure that all 
-# fish is sold and restocked forever, but no boar is sold. 
+# Test case 3: Assign random roles
 
-## YAML generation for node 1
+# Generate random roles
+role[0]="buyer"
+role[1]="seller"
+rand1=$[ $RANDOM % 2 ]
+rand2=$[ $RANDOM % 2 ]
+
+# Generate random things to sell
+item[1]="salt"
+item[2]="boars"
+item[3]="fish"
+rand_commodity=$[ $RANDOM % 3 ]
+
+# YAML generation for node 1
 export peer_id="0"
 export peer_port="10000"
-export role="buyer"
+export role="${role[$rand1]}"
 export salt_amount="0"
 export salt_unlimited="false"
 export boars_amount="0"
@@ -29,13 +39,13 @@ cat node1.yml
 ## YAML generation for node 2
 export peer_id="1"
 export peer_port="10001"
-export role="seller"
+export role="${role[$rand1]}"
 export salt_amount="0"
 export salt_unlimited="false"
 export boars_amount="10"
 export boars_unlimited="false"
-export fish_amount="10"
-export fish_unlimited="true"
+export fish_amount="0"
+export fish_unlimited="false"
 
 export maxpeers="1"
 export maxhops="1"
