@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/rpc"
 	"strconv"
+	"sync"
 
 	"gopkg.in/yaml.v2"
 )
@@ -58,38 +59,83 @@ func CreateNodeFromConfigPath(path string) (*BazaarNode, error) {
 	return CreateNodeFromConfigFile(configFile)
 }
 
-// Lookup runs the lookup command.
-func (bnode *BazaarNode) Lookup(args LookupArgs, reply *LookupResponse) error {
-	log.Printf("Looking for %d with lookup for %s", args.SellerID, args.ProductName)
-	return bnode.lookupProduct(args.ProductName, args.HopCount, args.SellerID)
-}
-
 // LookupArgs contains the RPC arguments for lookup, which is a product name,
-// hopcount, and sellerid to be passed.
+// hopcount, and buyerid to be passed.
 type LookupArgs struct {
 	ProductName string
 	HopCount    int
-	SellerID    int
+	BuyerID     int
+	Route       []int
 }
 
 // LookupResponse is empty because no response is required for lookup.
 type LookupResponse struct {
 }
 
-// lookupProduct takes in a product name and hopcount, and runs the lookup procedure.
-func (bnode *BazaarNode) lookupProduct(productName string, hopcount int, sellerID int) error {
+// Lookup runs the lookup command.
+func (bnode *BazaarNode) Lookup(args LookupArgs, reply *LookupResponse) error {
+	log.Printf("Looking for %d with lookup for %s", args.BuyerID, args.ProductName)
+	return bnode.lookupProduct(args.Route, args.ProductName, args.HopCount, args.BuyerID)
+}
 
+// lookupProduct takes in a product name and hopcount, and runs the lookup procedure.
+func (bnode *BazaarNode) lookupProduct(route []int, productName string, hopcount int, buyerID int) error {
+
+	log.Printf("Node %d received lookup request from %d\n", bnode.config.NodeID, buyerID)
 	if hopcount == 0 {
 		if bnode.config.Role == "buyer" {
 			return nil
 		}
 
-		// TODO: call reply(bnode.config.NodeID, sellerID)
+		// invariant: this node is a seller since it's not a buyer
+		if bnode.config.Target == productName {
+			bnode.reply(route, bnode.config.NodeID)
+		}
 	}
 
-	// for peer, addr := range bnode.config.Peers {
-	// TODO: call lookp rpc with hopcount - 1 and the product name
-	// }
+	// make sure we are done with all calls before we return
+	var wg sync.WaitGroup
+
+	log.Printf("Node %d flooding peers with lookup requests for %s from %d...\n", bnode.config.NodeID, productName, buyerID)
+	for peer, addr := range bnode.config.Peers {
+		// need to add this node to the route, and call lookup on this
+		route = append(route, bnode.config.NodeID)
+
+		log.Printf("Node %d is flooding peer %d for lookup\n", bnode.config.NodeID, peer)
+		wg.Add(1)
+		go func(peerAddr string) {
+			defer wg.Done()
+
+			log.Printf("enter func, dialing peer with addr %s\n", peerAddr)
+			con, err := rpc.Dial("tcp", peerAddr)
+			if err != nil {
+				log.Fatalln("dailing error in lookup: ", err)
+			}
+			log.Printf("done dialing")
+
+			req := LookupArgs{
+				ProductName: productName,
+				HopCount:    hopcount - 1,
+				BuyerID:     buyerID,
+				Route:       route,
+			}
+			var res LookupResponse
+
+			err = con.Call("node.Lookup", req, &res)
+			if err != nil {
+				log.Fatalln("reply error: ", err)
+			}
+
+			log.Printf("Lookup to %s finished\n", peerAddr)
+		}(addr)
+
+		// TODO: call lookp rpc with hopcount - 1 and the product name
+
+	}
+
+	log.Printf("Waiting for lookups to finish...\n")
+	wg.Wait()
+	log.Printf("Done flooding peers with lookups for %s from %d...\n", productName, buyerID)
 
 	return nil
 }
@@ -146,8 +192,7 @@ func (bnode *BazaarNode) reply(routeList []int, sellerID int) error {
 		log.Printf("Current routing List %v: ", routeList)
 
 		addr := bnode.config.Peers[recepientID]
-
-		con, err := rpc.DialHTTP("tcp", addr)
+		con, err := rpc.Dial("tcp", addr)
 		if err != nil {
 			log.Fatalln("dailing error: ", err)
 		}
@@ -182,7 +227,7 @@ func (bnode *BazaarNode) buy(sellerID int) error {
 
 	addr := bnode.config.Peers[sellerID]
 
-	con, err := rpc.DialHTTP("tcp", addr)
+	con, err := rpc.Dial("tcp", addr)
 	if err != nil {
 		log.Fatalln("dailing error: ", err)
 	}
@@ -242,27 +287,31 @@ func (bnode *BazaarNode) sell(target string) error {
 // ListenRPC listens on RPC for all methods on the desired listener. To stop
 // listening, one passes a bool to the stopChannel or closes stopChannel. This
 // method should be run in a goroutine. The listener passed will be closed if
-// something stopChannel receives a message.
-func (server *BazaarServer) ListenRPC(stopChannel chan bool) {
+// something stopChannel receives a message. The doneListening channel will be
+// sent a bool when the server is ready to accept connections.
+func (server *BazaarServer) ListenRPC(stopChannel chan bool, doneListening chan bool) {
 
 	addr := net.JoinHostPort("", strconv.Itoa(server.node.config.NodePort))
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
+		doneListening <- true
 		log.Fatalf("Error listening for RPC: %s", err)
 		return
 	}
 
 	rpcServer := rpc.NewServer()
-	rpcServer.Register(server.node)
+	rpcServer.RegisterName("node", server.node)
 
 	defer func() {
 		log.Printf("Closing %s listener for %s...\n", listener.Addr().Network(), listener.Addr().String())
 		listener.Close()
 	}()
 
+	log.Printf("Node %d listening for rpc on address %s\n", server.node.config.NodeID, addr)
 	// listen in goroutine so we can block until receiving a message in
 	// stopChannel
 	go rpcServer.Accept(listener)
+	doneListening <- true
 
 	// wait until something is in stopchannel or it is closed
 	<-stopChannel

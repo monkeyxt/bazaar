@@ -19,9 +19,10 @@ func main() {
 	// Finally, listen on rpc.
 	log.Printf("Listening on port %d for incoming RPC connections...", node.config.NodePort)
 	stopChan := make(chan bool)
+	doneChan := make(chan bool)
 	server := &BazaarServer{
 		node: node,
 	}
-	server.ListenRPC(stopChan)
+	server.ListenRPC(stopChan, doneChan)
 
 }
