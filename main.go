@@ -27,7 +27,10 @@ func main() {
 	server := &BazaarServer{
 		node: node,
 	}
-	go server.node.buyerLoop()
+
+	if node.config.Role == "buyer" {
+		server.node.buyerLoop()
+	}
 	server.ListenRPC(stopChan, doneChan)
 
 }
@@ -58,14 +61,17 @@ func (node *BazaarNode) buyerLoop() {
 		node.Lookup(args, &rpcResponse)
 
 		// Buy from the list of available sellers
-		time.Sleep(1 * time.Second)
+		time.Sleep(5 * time.Second)
 		var sellerList []Peer
 		for i := 0; i < len(node.sellerChannel); i++ {
 			sellerList = append(sellerList, <-node.sellerChannel)
 		}
-		randomSeller := sellerList[rand.Intn(len(sellerList))]
-		node.buy(randomSeller)
-		log.Printf("Node %d buys %s from seller node %d", node.config.NodeID, node.config.Target, randomSeller.PeerID)
+
+		if len(sellerList) != 0 {
+			randomSeller := sellerList[rand.Intn(len(sellerList))]
+			node.buy(randomSeller)
+			log.Printf("Node %d buys %s from seller node %d", node.config.NodeID, node.config.Target, randomSeller.PeerID)
+		}
 
 	}
 

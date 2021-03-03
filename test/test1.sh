@@ -13,7 +13,7 @@ export fish_amount="1"
 export fish_unlimited="false"
 
 export maxpeers="1"
-export maxhops="1"
+export maxhops="10"
 export nodeid="1"
 export nodeport="10001"
 
@@ -37,7 +37,7 @@ export fish_amount="10"
 export fish_unlimited="true"
 
 export maxpeers="1"
-export maxhops="1"
+export maxhops="10"
 export nodeid="0"
 export nodeport="10000"
 
