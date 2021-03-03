@@ -296,12 +296,6 @@ func (bnode *BazaarNode) sell(target string) error {
 		}
 	}
 
-	// In the case of unlimted item. Nothing to do, return nil.
-	if bnode.config.Items[targetID].Unlimited == true {
-		log.Printf("Seller node %d sold %s", bnode.config.NodeID, bnode.config.Items[targetID].Item)
-		return nil
-	}
-
 	// Complete the transaction
 	bnode.config.Mu.Lock()
 	if bnode.config.Items[targetID].Amount > 0 {
@@ -309,7 +303,20 @@ func (bnode *BazaarNode) sell(target string) error {
 		log.Printf("Seller node %d sold %s, amount remaining %d", bnode.config.NodeID, bnode.config.Items[targetID].Item, bnode.config.Items[targetID].Amount)
 	} else {
 
-		// TODO: Item sold out. Pick another item to sell
+		// If the item is defined to be unlimited in the YAML file restock the item and purchase again
+		if bnode.config.Items[targetID].Unlimited == true {
+
+			bnode.config.Items[targetID].Amount += 10
+			log.Printf("Seller node %d restocked %s", bnode.config.NodeID, bnode.config.Items[targetID].Item)
+
+			bnode.config.Items[targetID].Amount--
+			log.Printf("Seller node %d sold %s, amount remaining %d", bnode.config.NodeID, bnode.config.Items[targetID].Item, bnode.config.Items[targetID].Amount)
+
+		} else {
+
+			// TODO: Item sold out. Pick another item to sell
+
+		}
 
 	}
 	bnode.config.Mu.Unlock()

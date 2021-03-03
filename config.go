@@ -6,6 +6,7 @@ import "sync"
 // amounts), and a maximum number of peers to connect to.
 type NodeConfig struct {
 	// Peers is a map from a peer ID to an address
+	// TODO: consider the case when the node can be both the buyer & seller
 	Peers    map[int]string `yaml:"peers,omitempty"`
 	Role     string         `yaml:"role"`
 	Items    []ItemAmount   `yaml:",flow"`
