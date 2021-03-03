@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net"
+	"strconv"
 	"testing"
 )
 
@@ -36,11 +38,12 @@ func TestLookupSimple(t *testing.T) {
 		return
 	}
 
+	portStr := net.JoinHostPort("", strconv.Itoa(testnode.config.NodePort))
 	args := LookupArgs{
 		ProductName: "salt",
 		HopCount:    0,
 		BuyerID:     0,
-		Route:       []int{0},
+		Route:       []Peer{{PeerID: testnode.config.NodeID, Addr: portStr}},
 	}
 	var rpcResponse LookupResponse
 	err = testnode.Lookup(args, &rpcResponse)
@@ -119,8 +122,11 @@ func TestReplySimpleRPC(t *testing.T) {
 	go serverB.ListenRPC(stopChan, doneChan)
 	<-doneChan
 
+	// the reply args use test node B instead of A because test node B would
+	// have called the lookup method.
+	portStr := net.JoinHostPort("", strconv.Itoa(testNodeB.config.NodePort))
 	args := ReplyArgs{
-		RouteList: []int{1},
+		RouteList: []Peer{{PeerID: testNodeB.config.NodeID, Addr: portStr}},
 		SellerID:  0,
 	}
 
@@ -272,11 +278,12 @@ func TestLookupLinearRPC(t *testing.T) {
 	<-secondDoneChan
 	<-thirdDoneChan
 
+	portStr := net.JoinHostPort("", strconv.Itoa(testFirstNode.config.NodePort))
 	args := LookupArgs{
 		ProductName: "salt",
 		HopCount:    testFirstNode.config.MaxHops - 1,
 		BuyerID:     testFirstNode.config.NodeID,
-		Route:       []int{testFirstNode.config.NodeID},
+		Route:       []Peer{{PeerID: testFirstNode.config.NodeID, Addr: portStr}},
 	}
 
 	var rpcResponse LookupResponse

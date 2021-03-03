@@ -40,3 +40,9 @@ type ItemAmount struct {
 	Amount    int    `yaml:"amount"`
 	Unlimited bool   `yaml:"unlimited"`
 }
+
+// Peer holds a peerID and an address.
+type Peer struct {
+	PeerID int
+	Addr   string
+}

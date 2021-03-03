@@ -15,7 +15,8 @@ import (
 
 // BazaarNode contains the state for the node.
 type BazaarNode struct {
-	config NodeConfig
+	config        NodeConfig
+	sellerChannel chan Peer
 }
 
 // BazaarServer exposes methods for letting a node listen for RPC
@@ -66,6 +67,9 @@ func CreateNodeFromConfigFile(configFile []byte) (*BazaarNode, error) {
 	// set the seller target to the randomly selected item
 	node.config.SellerTarget = node.config.Items[randItemIdx].Item
 
+	// initialize the seller channel, just have 100 max for now
+	node.sellerChannel = make(chan Peer, 100)
+
 	return &node, nil
 }
 
@@ -103,7 +107,7 @@ type LookupArgs struct {
 	ProductName string
 	HopCount    int
 	BuyerID     int
-	Route       []int
+	Route       []Peer
 }
 
 // LookupResponse is empty because no response is required for lookup.
@@ -117,7 +121,7 @@ func (bnode *BazaarNode) Lookup(args LookupArgs, reply *LookupResponse) error {
 }
 
 // lookupProduct takes in a product name and hopcount, and runs the lookup procedure.
-func (bnode *BazaarNode) lookupProduct(route []int, productName string, hopcount int, buyerID int) error {
+func (bnode *BazaarNode) lookupProduct(route []Peer, productName string, hopcount int, buyerID int) error {
 
 	if bnode.config.Role == "seller" && bnode.config.SellerTarget == productName {
 		bnode.reply(route, bnode.config.NodeID)
@@ -135,7 +139,8 @@ func (bnode *BazaarNode) lookupProduct(route []int, productName string, hopcount
 	log.Printf("Node %d flooding peers with lookup requests for %s from %d...\n", bnode.config.NodeID, productName, buyerID)
 	for peer, addr := range bnode.config.Peers {
 		// need to add this node to the route, and call lookup on this
-		route = append(route, bnode.config.NodeID)
+		portStr := net.JoinHostPort("", strconv.Itoa(bnode.config.NodePort))
+		route = append(route, Peer{bnode.config.NodeID, portStr})
 
 		log.Printf("Node %d is flooding peer %d for lookup\n", bnode.config.NodeID, peer)
 		wg.Add(1)
@@ -177,9 +182,9 @@ func (bnode *BazaarNode) lookupProduct(route []int, productName string, hopcount
 // Reply relays the message back to the buyer
 func (bnode *BazaarNode) Reply(args ReplyArgs, reply *ReplyResponse) error {
 	if len(args.RouteList) == 1 {
-		log.Printf("Message at final hop: node %d with message from seller node %d", args.RouteList[len(args.RouteList)-1], args.SellerID)
+		log.Printf("Message at final hop: node %v with message from seller node %d", args.RouteList[len(args.RouteList)-1], args.SellerID)
 	} else {
-		log.Printf("Forward reply to node %d with message from seller node %d", args.RouteList[len(args.RouteList)-2], args.SellerID)
+		log.Printf("Forward reply to node %v with message from seller node %d", args.RouteList[len(args.RouteList)-2], args.SellerID)
 	}
 
 	return bnode.reply(args.RouteList, args.SellerID)
@@ -188,7 +193,7 @@ func (bnode *BazaarNode) Reply(args ReplyArgs, reply *ReplyResponse) error {
 // ReplyArgs contains the RPC arguments for reply, which is the backtracking list
 // and the sellerid to be returned
 type ReplyArgs struct {
-	RouteList []int
+	RouteList []Peer
 	SellerID  int
 }
 
@@ -197,7 +202,7 @@ type ReplyResponse struct {
 }
 
 // Reply message with the peerId of the seller
-func (bnode *BazaarNode) reply(routeList []int, sellerID int) error {
+func (bnode *BazaarNode) reply(routeList []Peer, sellerID int) error {
 
 	// routeList: a list of ids to traverse back to the original sender in the format of
 	//         [1, 5, 2, 6], so the reverse traversal path should be 6 --> 2 --> 5 --> 1
@@ -210,23 +215,18 @@ func (bnode *BazaarNode) reply(routeList []int, sellerID int) error {
 		// choose from.
 		log.Printf("Node %d got a match reply from node %d ", bnode.config.NodeID, sellerID)
 
-		var tempSellerList []int
-		tempSellerList = append([]int{sellerID}, tempSellerList...)
-
-		// Remove duplicate sellers from the list
-		bnode.config.SellerList = unique(tempSellerList)
-		log.Printf("Current seller list: %v", bnode.config.SellerList)
+		bnode.sellerChannel <- routeList[0]
+		log.Printf("Added %v to seller channel", routeList[0])
 
 	} else {
 
-		var recepientID int
-		recepientID, routeList = routeList[len(routeList)-2], routeList[:len(routeList)-1]
+		var recipient Peer
+		recipient, routeList = routeList[len(routeList)-2], routeList[:len(routeList)-1]
 
-		log.Printf("Current recepent ID: %d: ", recepientID)
+		log.Printf("Current recepent ID: %d: ", recipient.PeerID)
 		log.Printf("Current routing List %v: ", routeList)
 
-		addr := bnode.config.Peers[recepientID]
-		con, err := rpc.Dial("tcp", addr)
+		con, err := rpc.Dial("tcp", recipient.Addr)
 		if err != nil {
 			log.Fatalln("dailing error: ", err)
 		}
@@ -255,13 +255,11 @@ type TransactionResponse struct {
 }
 
 // Buy item directly from the seller with RCP call
-func (bnode *BazaarNode) buy(sellerID int) error {
+func (bnode *BazaarNode) buy(seller Peer) error {
 
-	log.Printf("Node %d buying from seller node %d", bnode.config.NodeID, sellerID)
+	log.Printf("Node %d buying from seller node %d", bnode.config.NodeID, seller.PeerID)
 
-	addr := bnode.config.Peers[sellerID]
-
-	con, err := rpc.Dial("tcp", addr)
+	con, err := rpc.Dial("tcp", seller.Addr)
 	if err != nil {
 		log.Fatalln("dailing error: ", err)
 	}
@@ -304,7 +302,7 @@ func (bnode *BazaarNode) sell(target string) error {
 	} else {
 
 		// If the item is defined to be unlimited in the YAML file restock the item and purchase again
-		if bnode.config.Items[targetID].Unlimited == true {
+		if bnode.config.Items[targetID].Unlimited {
 
 			bnode.config.Items[targetID].Amount += 10
 			log.Printf("Seller node %d restocked %s", bnode.config.NodeID, bnode.config.Items[targetID].Item)

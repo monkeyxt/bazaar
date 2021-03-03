@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"math/rand"
+	"net"
+	"strconv"
 	"time"
 )
 
@@ -29,7 +31,7 @@ func main() {
 
 }
 
-func (node *BazaarNode) buyerLoop() {
+func (node *BazaarNode) buyerLoop(stopChan chan bool) {
 
 	for {
 
@@ -42,19 +44,25 @@ func (node *BazaarNode) buyerLoop() {
 		log.Printf("Node %d plans to buy %s", node.config.NodeID, node.config.Target)
 
 		// Lookup request to neighbours
+		portStr := net.JoinHostPort("", strconv.Itoa(node.config.NodePort))
 		args := LookupArgs{
 			ProductName: node.config.Target,
 			HopCount:    node.config.MaxHops,
 			BuyerID:     node.config.NodeID,
+			Route:       []Peer{{PeerID: node.config.NodeID, Addr: portStr}},
 		}
 		var rpcResponse LookupResponse
 		node.Lookup(args, &rpcResponse)
 
 		// Buy from the list of available sellers
 		time.Sleep(1 * time.Second)
-		randomSeller := node.config.SellerList[rand.Intn(len(node.config.SellerList))]
+		var sellerList []Peer
+		for i := 0; i < len(node.sellerChannel); i++ {
+			sellerList = append(sellerList, <-node.sellerChannel)
+		}
+		randomSeller := sellerList[rand.Intn(len(sellerList))]
 		node.buy(randomSeller)
-		log.Printf("Node %d buys %s from seller node %d", node.config.NodeID, node.config.Target, randomSeller)
+		log.Printf("Node %d buys %s from seller node %d", node.config.NodeID, node.config.Target, randomSeller.PeerID)
 
 	}
 
