@@ -2,7 +2,7 @@
 # another to be a seller of boar. Ensure that nothing is sold. 
 
 # YAML generation for node 1
-export peer_id="0"
+export peer_id ="0"
 export peer_port="10000"
 export role="buyer"
 export salt_amount="0"
@@ -63,3 +63,7 @@ mv node1.yml node1/bazaar.yml
 mv node2.yml node2/bazaar.yml
 
 ## Run both nodes
+cd node1
+./bazaar &
+cd ../node2
+./bazaar &
