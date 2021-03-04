@@ -63,5 +63,7 @@ mv node1.yml node1/bazaar.yml
 mv node2.yml node2/bazaar.yml
 
 ## Run both nodes
-node1/bazaar &
-node2/bazaar &
+cd node1
+./bazaar &
+cd ../node2
+./bazaar &
