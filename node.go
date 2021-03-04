@@ -8,7 +8,6 @@ import (
 	"net"
 	"net/rpc"
 	"strconv"
-	"sync"
 
 	"gopkg.in/yaml.v2"
 )
@@ -124,7 +123,7 @@ func (bnode *BazaarNode) Lookup(args LookupArgs, reply *LookupResponse) error {
 func (bnode *BazaarNode) lookupProduct(route []Peer, productName string, hopcount int, buyerID int) error {
 
 	if bnode.config.Role == "seller" && bnode.config.SellerTarget == productName {
-		bnode.reply(route, bnode.config.NodeID)
+		go bnode.reply(route, bnode.config.NodeID)
 	}
 
 	log.Printf("Node %d received lookup request from %d\n", bnode.config.NodeID, buyerID)
@@ -133,19 +132,18 @@ func (bnode *BazaarNode) lookupProduct(route []Peer, productName string, hopcoun
 		return nil
 	}
 
-	// make sure we are done with all calls before we return
-	var wg sync.WaitGroup
-
 	log.Printf("Node %d flooding peers with lookup requests for %s from %d...\n", bnode.config.NodeID, productName, buyerID)
 	for peer, addr := range bnode.config.Peers {
+		if peer == bnode.config.NodeID {
+			// if this is us, then don't worry about doing a lookup
+			continue
+		}
 		// need to add this node to the route, and call lookup on this
 		portStr := net.JoinHostPort("", strconv.Itoa(bnode.config.NodePort))
 		route = append(route, Peer{bnode.config.NodeID, portStr})
 
 		log.Printf("Node %d is flooding peer %d for lookup\n", bnode.config.NodeID, peer)
-		wg.Add(1)
 		go func(peerAddr string) {
-			defer wg.Done()
 
 			con, err := rpc.Dial("tcp", peerAddr)
 			if err != nil {
@@ -168,12 +166,8 @@ func (bnode *BazaarNode) lookupProduct(route []Peer, productName string, hopcoun
 			log.Printf("Lookup to %s finished\n", peerAddr)
 		}(addr)
 
-		// TODO: call lookp rpc with hopcount - 1 and the product name
-
 	}
 
-	log.Printf("Node %d is waiting for lookups to finish...\n", bnode.config.NodeID)
-	wg.Wait()
 	log.Printf("Node %d is done flooding peers with lookups for %s from %d...\n", bnode.config.NodeID, productName, buyerID)
 
 	return nil

@@ -302,3 +302,66 @@ func TestLookupLinearRPC(t *testing.T) {
 	close(secondDoneChan)
 	close(thirdDoneChan)
 }
+
+// TestMilestoneOne tests the cases required for milestone one. This includes
+// three tests:
+//
+// 1. Assign one peer to be a buyer of fish and another to be a seller of fish.
+// Ensure that all fish is sold and restocked forever.
+//
+// 2. Assign one peer to be a buyer of fish and another to be a seller of boar.
+// Ensure that nothing is sold.
+//
+// 3. Randomly assign buyer and seller roles. Ensure that items keep being sold
+// throughout.
+// NOTE: in order for items to be sold throughout, there need to be matching
+// buyers and sellers which either never run out of items (and do not change),
+// or the restocking logic (both on the buyer and seller side) must be such that
+// restocking also changes the item sold.
+//
+func TestMilestoneOne(t *testing.T) {
+	// fishBuyerForever := `
+	// peers:
+	//   0: localhost:44444
+	// role: "buyer"
+	// items:
+	//   - item: "fish"
+	// 	amount: 1
+	// 	unlimited: true
+
+	// maxpeers: 1
+	// maxhops: 1
+	// nodeid: 1
+	// nodeport: 33333
+	// `
+	// fishSellerForever := `
+	// peers:
+	//   1: localhost:33333
+	// role: "seller"
+	// items:
+	//   - item: "fish"
+	// 	amount: 1
+	// 	unlimited: true
+
+	// maxpeers: 1
+	// maxhops: 1
+	// nodeid: 0
+	// nodeport: 44444
+	// `
+	// // boarSellerForever is connected to the fish buyer, reuse fish buyer
+	// boarSellerForever := `
+	// peers:
+	//   1: localhost:33333
+	// role: "seller"
+	// items:
+	//   - item: "boar"
+	// 	amount: 1
+	// 	unlimited: true
+
+	// maxpeers: 1
+	// maxhops: 1
+	// nodeid: 0
+	// nodeport: 43334
+	// `
+
+}
