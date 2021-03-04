@@ -9,3 +9,6 @@ To build bazaar, run `go build`. The result should be an executable named `bazaa
 
 ## How to configure
 The node can be configured with `bazaar.yml`. This is where the node gets information about peers, its role in the network, and items to buy or sell.
+
+## How to test
+Run `./test_all.sh` in the test folder
