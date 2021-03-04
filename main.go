@@ -4,14 +4,20 @@ import (
 	"log"
 	"math/rand"
 	"net"
+	"os"
+	"os/signal"
 	"strconv"
+	"syscall"
 	"time"
 )
 
 const defaultConfig string = "bazaar.yml"
 
 func main() {
-	// TODO: rest of project
+
+	// catch signals so we can gracefully exit
+	sigc := make(chan os.Signal, 1)
+	signal.Notify(sigc, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 
 	node, err := CreateNodeFromConfigPath(defaultConfig)
 	if err != nil {
@@ -24,6 +30,17 @@ func main() {
 	log.Printf("Listening on port %d for incoming RPC connections...", node.config.NodePort)
 	stopChan := make(chan bool)
 	doneChan := make(chan bool)
+
+	// closing listener on signal
+	go func(nodeStop chan bool) {
+		s := <-sigc
+		log.Printf("Received signal %s, closing listener and stopping bazaar...\n", s.String())
+		<-doneChan
+		nodeStop <- true
+		close(doneChan)
+		close(stopChan)
+	}(stopChan)
+
 	server := &BazaarServer{
 		node: node,
 	}
