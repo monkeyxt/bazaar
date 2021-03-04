@@ -29,7 +29,7 @@ func main() {
 	}
 
 	if node.config.Role == "buyer" {
-		server.node.buyerLoop()
+		go server.node.buyerLoop()
 	}
 	server.ListenRPC(stopChan, doneChan)
 
