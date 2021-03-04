@@ -1,3 +1,4 @@
+#!/bin/bash
 # Test case 1: Assign one peer to be a buyer of fish and another to
 # be a seller of fish. Ensure that all fish is sold and restocked forever.
 
@@ -10,7 +11,7 @@ export salt_unlimited="false"
 export boars_amount="0"
 export boars_unlimited="false"
 export fish_amount="1"
-export fish_unlimited="false"
+export fish_unlimited="true"
 
 export maxpeers="1"
 export maxhops="10"
@@ -31,7 +32,7 @@ export peer_port="10001"
 export role="seller"
 export salt_amount="0"
 export salt_unlimited="false"
-export boars_amount="10"
+export boars_amount="0"
 export boars_unlimited="false"
 export fish_amount="10"
 export fish_unlimited="true"

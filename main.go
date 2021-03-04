@@ -52,42 +52,43 @@ func main() {
 
 }
 
-func (node *BazaarNode) buyerLoop() {
+func (bnode *BazaarNode) buyerLoop() {
 	// wait before starting the buyer loop
-	time.Sleep(5 * time.Second)
+	time.Sleep(2 * time.Second)
 
 	for {
 
 		// Generate a buy request
-		for targetID := range node.config.Items {
-			if node.config.Items[targetID].Amount != 0 {
-				node.config.Target = node.config.Items[targetID].Item
+		for targetID := range bnode.config.Items {
+			if bnode.config.Items[targetID].Amount != 0 {
+				bnode.config.Target = bnode.config.Items[targetID].Item
 			}
 		}
-		log.Printf("Node %d plans to buy %s", node.config.NodeID, node.config.Target)
+		log.Printf("Node %d plans to buy %s", bnode.config.NodeID, bnode.config.Target)
 
 		// Lookup request to neighbours
-		portStr := net.JoinHostPort("", strconv.Itoa(node.config.NodePort))
+		portStr := net.JoinHostPort("", strconv.Itoa(bnode.config.NodePort))
 		args := LookupArgs{
-			ProductName: node.config.Target,
-			HopCount:    node.config.MaxHops,
-			BuyerID:     node.config.NodeID,
-			Route:       []Peer{{PeerID: node.config.NodeID, Addr: portStr}},
+			ProductName: bnode.config.Target,
+			HopCount:    bnode.config.MaxHops,
+			BuyerID:     bnode.config.NodeID,
+			Route:       []Peer{{PeerID: bnode.config.NodeID, Addr: portStr}},
 		}
 		var rpcResponse LookupResponse
-		node.Lookup(args, &rpcResponse)
+		go bnode.Lookup(args, &rpcResponse)
 
+		log.Printf("Waiting to retrieve sellers...")
 		// Buy from the list of available sellers
-		time.Sleep(5 * time.Second)
+		time.Sleep(200 * time.Millisecond)
 		var sellerList []Peer
-		for i := 0; i < len(node.sellerChannel); i++ {
-			sellerList = append(sellerList, <-node.sellerChannel)
+		for i := 0; i < len(bnode.sellerChannel); i++ {
+			sellerList = append(sellerList, <-bnode.sellerChannel)
 		}
 
 		if len(sellerList) != 0 {
 			randomSeller := sellerList[rand.Intn(len(sellerList))]
-			node.buy(randomSeller)
-			log.Printf("Node %d buys %s from seller node %d", node.config.NodeID, node.config.Target, randomSeller.PeerID)
+			go bnode.buy(randomSeller)
+			log.Printf("Node %d buys %s from seller node %d", bnode.config.NodeID, bnode.config.Target, randomSeller.PeerID)
 		}
 
 	}

@@ -1,26 +1,25 @@
+#!/bin/bash
 # Test case 3: Assign random roles
 
 # Generate random roles
 role[0]="buyer"
 role[1]="seller"
-rand1=$[ $RANDOM % 2 ]
-rand2=$[ $RANDOM % 2 ]
-
-# Generate random things to sell
-item[1]="salt"
-item[2]="boars"
-item[3]="fish"
-rand_commodity=$[ $RANDOM % 3 ]
+rand1=$[$RANDOM % 2]
+rand2=$[$RANDOM % 2]
+# echo "================================"
+# echo $rand1
+# echo $rand2
+# echo "================================"
 
 # YAML generation for node 1
-export peer_id="0"
+export peerid="0"
 export peer_port="10000"
 export role="${role[$rand1]}"
-export salt_amount="0"
-export salt_unlimited="false"
+export salt_amount="1"
+export salt_unlimited="true"
 export boars_amount="0"
 export boars_unlimited="false"
-export fish_amount="1"
+export fish_amount="0"
 export fish_unlimited="false"
 
 export maxpeers="1"
@@ -37,12 +36,12 @@ rm -f node1.yml temp.yml
 cat node1.yml
 
 ## YAML generation for node 2
-export peer_id="1"
+export peerid="1"
 export peer_port="10001"
-export role="${role[$rand1]}"
-export salt_amount="0"
-export salt_unlimited="false"
-export boars_amount="10"
+export role="${role[$rand2]}"
+export salt_amount="1"
+export salt_unlimited="true"
+export boars_amount="0"
 export boars_unlimited="false"
 export fish_amount="0"
 export fish_unlimited="false"

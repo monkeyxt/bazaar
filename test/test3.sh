@@ -1,8 +1,9 @@
+#!/bin/bash
 # Test case 3: Assign one peer to be a buyer of fish and
 # another to be a seller of boar. Ensure that nothing is sold.
 
 # YAML generation for node 1
-export peer_id ="0"
+export peerid="0"
 export peer_port="10000"
 export role="buyer"
 export salt_amount="0"
@@ -26,7 +27,7 @@ rm -f node1.yml temp.yml
 cat node1.yml
 
 ## YAML generation for node 2
-export peer_id="1"
+export peerid="1"
 export peer_port="10001"
 export role="seller"
 export salt_amount="0"

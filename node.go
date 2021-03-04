@@ -58,13 +58,15 @@ func CreateNodeFromConfigFile(configFile []byte) (*BazaarNode, error) {
 	var randItemIdx int
 	if len(availableItems) == 0 {
 		randItemIdx = rand.Intn(len(node.config.Items))
+		log.Println("NO ITEMS AVAILABLE! Picking one at random anyways...")
 	} else {
 		// pick item at random from the list of available items
 		randItemIdx = rand.Intn(len(availableItems))
 	}
 
 	// set the seller target to the randomly selected item
-	node.config.SellerTarget = node.config.Items[randItemIdx].Item
+	node.config.SellerTarget = availableItems[randItemIdx]
+	log.Printf("Node initialized with ID %d and seller target %s\n", node.config.NodeID, node.config.SellerTarget)
 
 	// initialize the seller channel, just have 100 max for now
 	node.sellerChannel = make(chan Peer, 100)
@@ -123,6 +125,7 @@ func (bnode *BazaarNode) Lookup(args LookupArgs, reply *LookupResponse) error {
 func (bnode *BazaarNode) lookupProduct(route []Peer, productName string, hopcount int, buyerID int) error {
 
 	if bnode.config.Role == "seller" && bnode.config.SellerTarget == productName {
+		log.Printf("Seller has found a buyer! Replying to %d along route %v\n", bnode.config.NodeID, route)
 		go bnode.reply(route, bnode.config.NodeID)
 	}
 
@@ -134,10 +137,13 @@ func (bnode *BazaarNode) lookupProduct(route []Peer, productName string, hopcoun
 
 	log.Printf("Node %d flooding peers with lookup requests for %s from %d...\n", bnode.config.NodeID, productName, buyerID)
 	for peer, addr := range bnode.config.Peers {
-		if peer == bnode.config.NodeID {
+		// TODO: find a better way of preventing bouncing off original node but
+		// also letting us do a first time lookup maybe
+		if buyerID == bnode.config.NodeID && hopcount < bnode.config.MaxHops {
 			// if this is us, then don't worry about doing a lookup
 			continue
 		}
+
 		// need to add this node to the route, and call lookup on this
 		portStr := net.JoinHostPort("", strconv.Itoa(bnode.config.NodePort))
 		route = append(route, Peer{bnode.config.NodeID, portStr})
@@ -293,31 +299,36 @@ func (bnode *BazaarNode) sell(target string) error {
 	if bnode.config.Items[targetID].Amount > 0 {
 
 		bnode.config.Items[targetID].Amount--
-		log.Printf("Seller node %d sold %s, amount remaining %d", bnode.config.NodeID, bnode.config.Items[targetID].Item, bnode.config.Items[targetID].Amount)
+		log.Printf("MOGUL MOVES!!!! 💰💰💰 Node %d sold %s, amount remaining %d 💰💰💰", bnode.config.NodeID, bnode.config.Items[targetID].Item, bnode.config.Items[targetID].Amount)
 
 	} else {
 
 		// If the item is defined to be unlimited in the YAML file restock the item and purchase again
-		if bnode.config.Items[targetID].Unlimited == true {
+		if bnode.config.Items[targetID].Unlimited {
 
 			bnode.config.Items[targetID].Amount += 10
 			log.Printf("Seller node %d restocked %s", bnode.config.NodeID, bnode.config.Items[targetID].Item)
 
 			bnode.config.Items[targetID].Amount--
-			log.Printf("Seller node %d sold %s, amount remaining %d", bnode.config.NodeID, bnode.config.Items[targetID].Item, bnode.config.Items[targetID].Amount)
+			log.Printf("MOGUL MOVES!!!! 💰💰💰 Node %d sold %s, amount remaining %d 💰💰💰", bnode.config.NodeID, bnode.config.Items[targetID].Item, bnode.config.Items[targetID].Amount)
 
 		} else {
 
 			// Item sold out. Pick another item randomly to sell
 			var commodity []string
 			for itemID := range bnode.config.Items {
-				if bnode.config.Items[itemID].Amount != 0 {
+				if bnode.config.Items[itemID].Amount > 0 {
 					commodity = append(commodity, bnode.config.Items[itemID].Item)
 				}
 			}
 
-			bnode.config.SellerTarget = commodity[rand.Intn(len(commodity))]
-			log.Printf("Seller node %d now selling %s", bnode.config.NodeID, bnode.config.SellerTarget)
+			// only select from random if there are things to select
+			if len(commodity) > 0 {
+				bnode.config.SellerTarget = commodity[rand.Intn(len(commodity))]
+				log.Printf("Seller node %d now selling %s", bnode.config.NodeID, bnode.config.SellerTarget)
+			} else {
+				log.Printf("Seller node %d is out of items!\n", bnode.config.NodeID)
+			}
 		}
 
 	}
