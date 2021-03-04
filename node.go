@@ -58,14 +58,14 @@ func CreateNodeFromConfigFile(configFile []byte) (*BazaarNode, error) {
 	var randItemIdx int
 	if len(availableItems) == 0 {
 		randItemIdx = rand.Intn(len(node.config.Items))
-		log.Println("NO ITEMS AVAILABLE! Picking one at random anyways...")
+		log.Println("NO ITEMS AVAILABLE! Picking no items...")
 	} else {
 		// pick item at random from the list of available items
 		randItemIdx = rand.Intn(len(availableItems))
+		node.config.SellerTarget = availableItems[randItemIdx]
 	}
 
 	// set the seller target to the randomly selected item
-	node.config.SellerTarget = availableItems[randItemIdx]
 	log.Printf("Node initialized with ID %d and seller target %s\n", node.config.NodeID, node.config.SellerTarget)
 
 	// initialize the seller channel, just have 100 max for now
