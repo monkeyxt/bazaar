@@ -26,7 +26,7 @@ type NodeConfig struct {
 	Mu sync.Mutex
 
 	// Target is the item that the buyer wishes to buy
-	Target string
+	BuyerTarget string
 
 	// SellerTarget is the item that the seller is currently selling
 	SellerTarget string

@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/rpc"
 	"strconv"
+	"time"
 
 	"gopkg.in/yaml.v2"
 )
@@ -46,27 +47,30 @@ func CreateNodeFromConfigFile(configFile []byte) (*BazaarNode, error) {
 		return nil, fmt.Errorf("too many peers in the peers list. There are %d, the maximum is %d", len(node.config.Peers), node.config.MaxPeers)
 	}
 
-	// NOTE: project wasnt specific on how to select seller items, so we pick at
-	// random
-	// set the sellertarget depending on the available items
-	availableItems, err := GetAvailableItems(&node)
-	if err != nil {
-		return nil, fmt.Errorf("error getting available items when loading config: %s", err)
-	}
+	if node.config.Role == "seller" || node.config.Role == "both" {
+		// NOTE: project wasnt specific on how to select seller items, so we pick at
+		// random
+		// set the sellertarget depending on the available items
+		availableItems, err := GetAvailableItems(&node)
+		if err != nil {
+			return nil, fmt.Errorf("error getting available items when loading config: %s", err)
+		}
 
-	// if available items is empty just pick from len(items)
-	var randItemIdx int
-	if len(availableItems) == 0 {
-		randItemIdx = rand.Intn(len(node.config.Items))
-		log.Println("NO ITEMS AVAILABLE! Picking no items...")
-	} else {
-		// pick item at random from the list of available items
-		randItemIdx = rand.Intn(len(availableItems))
-		node.config.SellerTarget = availableItems[randItemIdx]
-	}
+		// if available items is empty just pick from len(items)
+		var randItemIdx int
+		if len(availableItems) == 0 {
+			randItemIdx = rand.Intn(len(node.config.Items))
+			log.Println("NO ITEMS AVAILABLE! Picking no items...")
+		} else {
+			// pick item at random from the list of available items
+			randItemIdx = rand.Intn(len(availableItems))
+			node.config.SellerTarget = availableItems[randItemIdx]
+		}
 
-	// set the seller target to the randomly selected item
-	log.Printf("Node initialized with ID %d and seller target %s\n", node.config.NodeID, node.config.SellerTarget)
+		// set the seller target to the randomly selected item
+		log.Printf("Node initialized with ID %d and seller target %s\n", node.config.NodeID, node.config.SellerTarget)
+
+	}
 
 	// initialize the seller channel, just have 100 max for now
 	node.sellerChannel = make(chan Peer, 100)
@@ -124,7 +128,7 @@ func (bnode *BazaarNode) Lookup(args LookupArgs, reply *LookupResponse) error {
 // lookupProduct takes in a product name and hopcount, and runs the lookup procedure.
 func (bnode *BazaarNode) lookupProduct(route []Peer, productName string, hopcount int, buyerID int) error {
 
-	if bnode.config.Role == "seller" && bnode.config.SellerTarget == productName {
+	if (bnode.config.Role == "seller" || bnode.config.Role == "both") && (bnode.config.SellerTarget == productName) {
 		log.Printf("Seller has found a buyer! Replying to %d along route %v\n", bnode.config.NodeID, route)
 		go bnode.reply(route, bnode.config.NodeID)
 	}
@@ -264,7 +268,7 @@ func (bnode *BazaarNode) buy(seller Peer) error {
 		log.Fatalln("dailing error: ", err)
 	}
 
-	req := TransactionArgs{bnode.config.Target}
+	req := TransactionArgs{bnode.config.BuyerTarget}
 	var res TransactionResponse
 
 	err = con.Call("node.Sell", req, &res)
@@ -384,4 +388,55 @@ func unique(intSlice []int) []int {
 		}
 	}
 	return list
+}
+
+// init is the entrance point for all nodes
+func (bnode *BazaarNode) init() {
+	if bnode.config.Role == "buyer" || bnode.config.Role == "both" {
+		go bnode.buyerLoop()
+	}
+}
+
+// buyerLoop is the lookup/buy loop for the buyer
+func (bnode *BazaarNode) buyerLoop() {
+	// wait before starting the buyer loop
+	time.Sleep(2 * time.Second)
+
+	for {
+
+		// Generate a buy request
+		for targetID := range bnode.config.Items {
+			if bnode.config.Items[targetID].Amount != 0 {
+				bnode.config.BuyerTarget = bnode.config.Items[targetID].Item
+			}
+		}
+		log.Printf("Node %d plans to buy %s", bnode.config.NodeID, bnode.config.BuyerTarget)
+
+		// Lookup request to neighbours
+		portStr := net.JoinHostPort("", strconv.Itoa(bnode.config.NodePort))
+		args := LookupArgs{
+			ProductName: bnode.config.BuyerTarget,
+			HopCount:    bnode.config.MaxHops,
+			BuyerID:     bnode.config.NodeID,
+			Route:       []Peer{{PeerID: bnode.config.NodeID, Addr: portStr}},
+		}
+		var rpcResponse LookupResponse
+		go bnode.Lookup(args, &rpcResponse)
+
+		log.Printf("Waiting to retrieve sellers...")
+		// Buy from the list of available sellers
+		time.Sleep(200 * time.Millisecond)
+		var sellerList []Peer
+		for i := 0; i < len(bnode.sellerChannel); i++ {
+			sellerList = append(sellerList, <-bnode.sellerChannel)
+		}
+
+		if len(sellerList) != 0 {
+			randomSeller := sellerList[rand.Intn(len(sellerList))]
+			go bnode.buy(randomSeller)
+			log.Printf("Node %d buys %s from seller node %d", bnode.config.NodeID, bnode.config.BuyerTarget, randomSeller.PeerID)
+		}
+
+	}
+
 }
