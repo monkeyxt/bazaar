@@ -17,3 +17,5 @@ Run `./test_all.sh` in the test folder
 
 ### Milestone 2
 Run `./runtest.sh` in the `test5` and `test6` folder
+
+For general testing, make a config file based on `/generatednodes/config.yaml`, put it in the test folder and use the `runtest.sh` bash to run the config file.
