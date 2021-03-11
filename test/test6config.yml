@@ -1,7 +1,7 @@
-K: 1
-N: 2
+K: 2
+N: 3
 maxHops: 10
-outputDir: "test6nodes"
+outputDir: test6nodes
 staticNodes:
   0:
     role: "buyer"
@@ -24,3 +24,5 @@ staticNodes:
 includeEdges:
   - [0,2]
   - [1,2]
+excludeEdges:
+  - [0,1]

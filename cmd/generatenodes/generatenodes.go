@@ -122,6 +122,8 @@ func main() {
 		temp.NodePort = nodePort
 		temp.Peers = make(map[int]string)
 		temp.NodeID = k
+		temp.MaxPeers = netConf.K
+		temp.MaxHops = netConf.MaxHops
 		nodePort++
 		netConf.StaticNodes[k] = temp
 	}

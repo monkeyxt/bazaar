@@ -1,7 +1,7 @@
 K: 1
 N: 2
 maxHops: 10
-outputDir: "test1nodes"
+outputDir: test1nodes
 staticNodes:
   0:
     role: "seller"

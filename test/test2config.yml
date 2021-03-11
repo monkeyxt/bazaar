@@ -1,7 +1,7 @@
 K: 1
 N: 2
 maxHops: 10
-outputDir: "test2nodes"
+outputDir: test2nodes
 staticNodes:
   0:
     role: "buyer"

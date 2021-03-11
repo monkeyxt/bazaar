@@ -1,10 +1,10 @@
 K: 4
 N: 5
 maxHops: 2
-outputDir: "test5nodes"
+outputDir: test5nodes
 staticNodes:
   0:
-    role: "sell"
+    role: "seller"
     items:
       - item: "boars"
         amount: 10

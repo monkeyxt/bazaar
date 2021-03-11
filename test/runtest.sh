@@ -2,19 +2,29 @@
 # runtest.sh
 # Takes 1 argument that is a path to a config yaml file
 
+# build generatenodes
+go build ../cmd/generatenodes
 
 # Parse argument to get the config yml file
 node_config=$1
 
-# Retrieve the node directory from the config file 
+# Retrieve the node directory from the config file
 node_folder=$(grep -A0 'outputDir:' $1 | awk '{ print $2}')
 echo $node_folder
 
-# Make the directory 
+# Make the directory
 mkdir -p $node_folder
 
 # Generate the .yml files in the directory using the config
-generate_nodes --config $node_config
+./generatenodes --config $node_config
+
+# check if dir exists and cat everything if so
+if command -v bat &> /dev/null
+then
+    bat $node_folder/*.yml
+else
+    cat $node_folder/*.yml
+fi
 
 pids=()
 
@@ -25,12 +35,11 @@ function kill_bazaars() {
     do
         kill -INT $pid
     done
-    rm -rf $node_folder
 }
 trap kill_bazaars INT TERM EXIT
 
 # Run bazaar for each of the .yml files
-yamls="$node_folder"/*.yml
+yamls=`ls "$node_folder"/*.yml`
 for file in $yamls
 do
     ../bazaar --config $file & pids+=( $! )
@@ -44,3 +53,4 @@ done
 
 # Remove the directory with the node configs
 rm -rf $node_folder
+rm generatenodes
