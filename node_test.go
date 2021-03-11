@@ -4,6 +4,8 @@ import (
 	"net"
 	"strconv"
 	"testing"
+
+	"github.com/rjected/bazaar/nodeconfig"
 )
 
 const testingConfig string = `
@@ -43,7 +45,7 @@ func TestLookupSimple(t *testing.T) {
 		ProductName: "salt",
 		HopCount:    0,
 		BuyerID:     0,
-		Route:       []Peer{{PeerID: testnode.config.NodeID, Addr: portStr}},
+		Route:       []nodeconfig.Peer{{PeerID: testnode.config.NodeID, Addr: portStr}},
 	}
 	var rpcResponse LookupResponse
 	err = testnode.Lookup(args, &rpcResponse)
@@ -126,8 +128,8 @@ func TestReplySimpleRPC(t *testing.T) {
 	// have called the lookup method.
 	portStr := net.JoinHostPort("", strconv.Itoa(testNodeB.config.NodePort))
 	args := ReplyArgs{
-		RouteList:  []Peer{{PeerID: testNodeB.config.NodeID, Addr: portStr}},
-		SellerInfo: Peer{testNodeB.config.NodeID, net.JoinHostPort("", strconv.Itoa(testNodeB.config.NodePort))},
+		RouteList:  []nodeconfig.Peer{{PeerID: testNodeB.config.NodeID, Addr: portStr}},
+		SellerInfo: nodeconfig.Peer{testNodeB.config.NodeID, net.JoinHostPort("", strconv.Itoa(testNodeB.config.NodePort))},
 	}
 
 	var rpcResponse ReplyResponse
@@ -283,7 +285,7 @@ func TestLookupLinearRPC(t *testing.T) {
 		ProductName: "salt",
 		HopCount:    testFirstNode.config.MaxHops - 1,
 		BuyerID:     testFirstNode.config.NodeID,
-		Route:       []Peer{{PeerID: testFirstNode.config.NodeID, Addr: portStr}},
+		Route:       []nodeconfig.Peer{{PeerID: testFirstNode.config.NodeID, Addr: portStr}},
 	}
 
 	var rpcResponse LookupResponse

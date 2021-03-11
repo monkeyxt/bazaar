@@ -1,0 +1,27 @@
+K: 3
+N: 7
+maxHops: 11
+outputDir: ./output
+staticNodes:
+  0:
+    role: "buyer"
+    items:
+      - item: "boars"
+        amount: 1
+        unlimited: true
+  1:
+    role: "buyer"
+    items:
+      - item: "boars"
+        amount: 1
+        unlimited: true
+  2:
+    role: "buyer"
+    items:
+      - item: "boars"
+        amount: 1
+        unlimited: true
+excludeEdges:
+  - [1,2]
+includeEdges:
+  - [0,1]
