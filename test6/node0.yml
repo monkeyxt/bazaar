@@ -1,0 +1,18 @@
+peers:
+  2: localhost:10002
+role: "buyer"
+items:
+  - item: "salt"
+    amount: 1
+    unlimited: true
+  - item: "boars"
+    amount: 0
+    unlimited: false
+  - item: "fish"
+    amount: 0
+    unlimited: false 
+
+maxpeers: 1
+maxhops: 2
+nodeid: 0
+nodeport: 10000
