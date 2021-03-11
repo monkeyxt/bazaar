@@ -1,8 +1,7 @@
 #!/bin/bash
-# Test case 5: 1 buyer, 3 sellers, 2 hops aparts.
+# runtest.sh
+# Takes 1 argument that is a path to a config yaml file
 
-
-# Generate a folder for the .yml files for the nodes
 
 # Parse argument to get the config yml file
 node_config=$1
@@ -15,7 +14,7 @@ echo $node_folder
 mkdir -p $node_folder
 
 # Generate the .yml files in the directory using the config
-# generate_nodes --config $node_config
+generate_nodes --config $node_config
 
 pids=()
 
