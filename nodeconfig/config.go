@@ -1,4 +1,5 @@
-package main
+// Package nodeconfig contains the configuration structures for bazaar nodes.
+package nodeconfig
 
 import "sync"
 
@@ -25,7 +26,7 @@ type NodeConfig struct {
 	// Mu is the mutex lock for the current node
 	Mu sync.Mutex `yaml:"-"`
 
-	// Target is the item that the buyer wishes to buy
+	// BuyerTarget is the item that the buyer wishes to buy
 	BuyerTarget string `yaml:"-"`
 
 	// SellerTarget is the item that the seller is currently selling

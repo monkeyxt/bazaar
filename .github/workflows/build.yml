@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build:
+  build-bazaar:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -15,3 +15,12 @@ jobs:
           stable: 'false'
           go-version: '1.15.8'
       - run: go build
+  build-generatenodes:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          stable: 'false'
+          go-version: '1.15.8'
+      - run: go build ./cmd/generatenodes
