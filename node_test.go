@@ -126,8 +126,8 @@ func TestReplySimpleRPC(t *testing.T) {
 	// have called the lookup method.
 	portStr := net.JoinHostPort("", strconv.Itoa(testNodeB.config.NodePort))
 	args := ReplyArgs{
-		RouteList: []Peer{{PeerID: testNodeB.config.NodeID, Addr: portStr}},
-		SellerID:  0,
+		RouteList:  []Peer{{PeerID: testNodeB.config.NodeID, Addr: portStr}},
+		SellerInfo: Peer{testNodeB.config.NodeID, net.JoinHostPort("", strconv.Itoa(testNodeB.config.NodePort))},
 	}
 
 	var rpcResponse ReplyResponse
