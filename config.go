@@ -20,16 +20,16 @@ type NodeConfig struct {
 	NodePort int `yaml:"nodeport"`
 
 	// SellerList is a list of sellers for the buyer to choose from
-	SellerList []int
+	SellerList []int `yaml:"-"`
 
 	// Mu is the mutex lock for the current node
-	Mu sync.Mutex
+	Mu sync.Mutex `yaml:"-"`
 
 	// Target is the item that the buyer wishes to buy
-	BuyerTarget string
+	BuyerTarget string `yaml:"-"`
 
 	// SellerTarget is the item that the seller is currently selling
-	SellerTarget string
+	SellerTarget string `yaml:"-"`
 }
 
 // ItemAmount is an item, associated amount, and an Unlimited setting. If

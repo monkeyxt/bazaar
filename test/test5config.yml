@@ -1,0 +1,41 @@
+K: 4
+N: 5
+maxHops: 2
+outputDir: "test5nodes"
+staticNodes:
+  0:
+    role: "sell"
+    items:
+      - item: "boars"
+        amount: 10
+        unlimited: true
+  1:
+    role: "none"
+  2:
+    role: "buyer"
+    items:
+      - item: "boars"
+        amount: 1
+        unlimited: true
+  3:
+    role: "buyer"
+    items:
+      - item: "boars"
+        amount: 1
+        unlimited: true
+  4:
+    role: "buyer"
+    items:
+      - item: "boars"
+        amount: 1
+        unlimited: true
+
+includeEdges:
+  - [0,1]
+  - [1,2]
+  - [1,3]
+  - [1,4]
+excludeEdges:
+  - [0,2]
+  - [0,3]
+  - [0,4]

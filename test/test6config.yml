@@ -1,0 +1,26 @@
+K: 1
+N: 2
+maxHops: 10
+outputDir: "test6nodes"
+staticNodes:
+  0:
+    role: "buyer"
+    items:
+      - item: "salt"
+        amount: 1
+        unlimited: true
+  1:
+    role: "buyer"
+    items:
+      - item: "salt"
+        amount: 1
+        unlimited: true
+  2:
+    role: "seller"
+    items:
+      - item: "salt"
+        amount: 1
+        unlimited: false
+includeEdges:
+  - [0,2]
+  - [1,2]

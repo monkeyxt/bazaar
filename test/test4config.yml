@@ -1,0 +1,19 @@
+K: 1
+N: 2
+maxHops: 10
+outputDir: "test4nodes"
+staticNodes:
+  0:
+    role: "random"
+    items:
+      - item: "salt"
+        amount: 1
+        unlimited: true
+  1:
+    role: "random"
+    items:
+      - item: "salt"
+        amount: 1
+        unlimited: true
+includeEdges:
+  - [0,1]
