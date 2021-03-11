@@ -141,10 +141,16 @@ func (bnode *BazaarNode) lookupProduct(route []Peer, productName string, hopcoun
 
 	log.Printf("Node %d flooding peers with lookup requests for %s from %d...\n", bnode.config.NodeID, productName, buyerID)
 	for peer, addr := range bnode.config.Peers {
-		// TODO: find a better way of preventing bouncing off original node but
-		// also letting us do a first time lookup maybe
-		if buyerID == bnode.config.NodeID && hopcount < bnode.config.MaxHops {
-			// if this is us, then don't worry about doing a lookup
+
+		// Check if peer is already in the route. If so, skip the request
+		peerInRoute := false
+		for _, routePeer := range route {
+			if peer == routePeer.PeerID && hopcount < bnode.config.MaxHops {
+				peerInRoute = true
+				break
+			}
+		}
+		if peerInRoute {
 			continue
 		}
 
