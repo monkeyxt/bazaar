@@ -15,6 +15,8 @@
 
 # Generate the .yml files in the directory using the config
 # generate_nodes --config $node_config
+(cd ../ && go build)
+(cd ../ && cp bazaar test5)
 
 pids=()
 
