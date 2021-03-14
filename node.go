@@ -131,12 +131,12 @@ func (bnode *BazaarNode) lookupProduct(route []nodeconfig.Peer, productName stri
 
 	// Add the current node to the routelist
 	portStr := net.JoinHostPort("", strconv.Itoa(bnode.config.NodePort))
-	route = append(route, nodeconfig.Peer{bnode.config.NodeID, portStr})
+	route = append(route, nodeconfig.Peer{PeerID: bnode.config.NodeID, Addr: portStr})
 
 	// Reached a seller with the desired product. Send a reply.
 	if (bnode.config.Role == "seller" || bnode.config.Role == "both") && (bnode.config.SellerTarget == productName) {
 		log.Printf("Seller has found a buyer! Replying to %v along route %v\n", route[len(route)-2], route)
-		go bnode.reply(route, nodeconfig.Peer{bnode.config.NodeID, net.JoinHostPort("", strconv.Itoa(bnode.config.NodePort))})
+		go bnode.reply(route, nodeconfig.Peer{PeerID: bnode.config.NodeID, Addr: net.JoinHostPort("", strconv.Itoa(bnode.config.NodePort))})
 	}
 
 	log.Printf("Node %d received lookup request from %d\n", bnode.config.NodeID, buyerID)
@@ -164,6 +164,8 @@ func (bnode *BazaarNode) lookupProduct(route []nodeconfig.Peer, productName stri
 		log.Printf("Node %d is flooding peer %d for lookup\n", bnode.config.NodeID, peer)
 		go func(peerAddr string) {
 
+			start := time.Now()
+
 			con, err := rpc.Dial("tcp", peerAddr)
 			if err != nil {
 				log.Fatalln("dailing error in lookup: ", err)
@@ -183,6 +185,9 @@ func (bnode *BazaarNode) lookupProduct(route []nodeconfig.Peer, productName stri
 			}
 
 			log.Printf("Lookup to %s finished\n", peerAddr)
+			end := time.Now()
+			bnode.reportLatency(start, end)
+
 		}(addr)
 
 	}
@@ -228,7 +233,7 @@ func (bnode *BazaarNode) reply(routeList []nodeconfig.Peer, sellerInfo nodeconfi
 		// choose from.
 		log.Printf("Node %d got a match reply from node %d ", bnode.config.NodeID, sellerInfo.PeerID)
 
-		bnode.sellerChannel <- nodeconfig.Peer{sellerInfo.PeerID, sellerInfo.Addr}
+		bnode.sellerChannel <- nodeconfig.Peer{PeerID: sellerInfo.PeerID, Addr: sellerInfo.Addr}
 		log.Printf("Added node %d to seller channel", sellerInfo.PeerID)
 
 	} else {
@@ -236,21 +241,29 @@ func (bnode *BazaarNode) reply(routeList []nodeconfig.Peer, sellerInfo nodeconfi
 		var recipient nodeconfig.Peer
 		recipient, routeList = routeList[len(routeList)-2], routeList[:len(routeList)-1]
 
-		log.Printf("Current recepent ID: %d: ", recipient.PeerID)
-		log.Printf("Current routing List %v: ", routeList)
+		// log.Printf("Current recepent ID: %d: ", recipient.PeerID)
+		// log.Printf("Current routing List %v: ", routeList)
 
-		con, err := rpc.Dial("tcp", recipient.Addr)
-		if err != nil {
-			log.Fatalln("dailing error: ", err)
-		}
+		go func(peerAddr string) {
 
-		req := ReplyArgs{routeList, sellerInfo}
-		var res ReplyResponse
+			start := time.Now()
 
-		err = con.Call("node.Reply", req, &res)
-		if err != nil {
-			log.Fatalln("reply error: ", err)
-		}
+			con, err := rpc.Dial("tcp", peerAddr)
+			if err != nil {
+				log.Fatalln("dailing error: ", err)
+			}
+
+			req := ReplyArgs{routeList, sellerInfo}
+			var res ReplyResponse
+
+			err = con.Call("node.Reply", req, &res)
+			if err != nil {
+				log.Fatalln("reply error: ", err)
+			}
+			end := time.Now()
+			bnode.reportLatency(start, end)
+
+		}(recipient.Addr)
 
 	}
 
@@ -272,18 +285,27 @@ func (bnode *BazaarNode) buy(seller nodeconfig.Peer) error {
 
 	log.Printf("Node %d buying from seller node %d", bnode.config.NodeID, seller.PeerID)
 
-	con, err := rpc.Dial("tcp", seller.Addr)
-	if err != nil {
-		log.Fatalln("dailing error: ", err)
-	}
+	go func(peerAddr string) {
 
-	req := TransactionArgs{bnode.config.BuyerTarget}
-	var res TransactionResponse
+		start := time.Now()
 
-	err = con.Call("node.Sell", req, &res)
-	if err != nil {
-		log.Fatalln("reply error: ", err)
-	}
+		con, err := rpc.Dial("tcp", peerAddr)
+		if err != nil {
+			log.Fatalln("dailing error: ", err)
+		}
+
+		req := TransactionArgs{bnode.config.BuyerTarget}
+		var res TransactionResponse
+
+		err = con.Call("node.Sell", req, &res)
+		if err != nil {
+			log.Fatalln("reply error: ", err)
+		}
+
+		end := time.Now()
+		bnode.reportLatency(start, end)
+
+	}(seller.Addr)
 
 	return nil
 
@@ -447,6 +469,20 @@ func (bnode *BazaarNode) buyerLoop() {
 			log.Printf("Node %d buys %s from seller node %d", bnode.config.NodeID, bnode.config.BuyerTarget, randomSeller.PeerID)
 		}
 
+	}
+
+}
+
+// reportLatency logs the average latency of RPC calls every 50 invocations
+func (bnode *BazaarNode) reportLatency(start time.Time, end time.Time) {
+
+	durationFloat64 := end.Sub(start).Seconds()
+	bnode.config.Latency += durationFloat64
+	bnode.config.RequestCount += 1
+
+	if bnode.config.RequestCount%50 == 0 {
+		averageLatency := bnode.config.Latency / float64(bnode.config.RequestCount)
+		log.Printf("[Performance] Average RPC Latency of peer %d： %f", bnode.config.NodeID, averageLatency)
 	}
 
 }

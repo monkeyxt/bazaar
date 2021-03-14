@@ -129,7 +129,7 @@ func TestReplySimpleRPC(t *testing.T) {
 	portStr := net.JoinHostPort("", strconv.Itoa(testNodeB.config.NodePort))
 	args := ReplyArgs{
 		RouteList:  []nodeconfig.Peer{{PeerID: testNodeB.config.NodeID, Addr: portStr}},
-		SellerInfo: nodeconfig.Peer{testNodeB.config.NodeID, net.JoinHostPort("", strconv.Itoa(testNodeB.config.NodePort))},
+		SellerInfo: nodeconfig.Peer{PeerID: testNodeB.config.NodeID, Addr: net.JoinHostPort("", strconv.Itoa(testNodeB.config.NodePort))},
 	}
 
 	var rpcResponse ReplyResponse

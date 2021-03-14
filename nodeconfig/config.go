@@ -31,6 +31,12 @@ type NodeConfig struct {
 
 	// SellerTarget is the item that the seller is currently selling
 	SellerTarget string `yaml:"-"`
+
+	// Latency is the culmulative response time for all requests
+	Latency float64 `yaml:"-"`
+
+	// RequestCount is the number of RPC calls submitted by the client
+	RequestCount int `yaml:"-"`
 }
 
 // ItemAmount is an item, associated amount, and an Unlimited setting. If
