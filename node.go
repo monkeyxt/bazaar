@@ -18,6 +18,10 @@ import (
 type BazaarNode struct {
 	config        nodeconfig.NodeConfig
 	sellerChannel chan nodeconfig.Peer
+
+	// lookupList is to make sure we don't hit the limit on the number of file
+	// descriptors
+	lookupList chan bool
 }
 
 // BazaarServer exposes methods for letting a node listen for RPC
@@ -76,6 +80,9 @@ func CreateNodeFromConfigFile(configFile []byte) (*BazaarNode, error) {
 	// initialize the seller channel, just have 100 max for now
 	node.sellerChannel = make(chan nodeconfig.Peer, 100)
 
+	// initialize lookup limit channel
+	node.lookupList = make(chan bool, 1024)
+
 	return &node, nil
 }
 
@@ -130,13 +137,13 @@ func (bnode *BazaarNode) Lookup(args LookupArgs, reply *LookupResponse) error {
 func (bnode *BazaarNode) lookupProduct(route []nodeconfig.Peer, productName string, hopcount int, buyerID int) error {
 
 	// Add the current node to the routelist
-	portStr := net.JoinHostPort("", strconv.Itoa(bnode.config.NodePort))
+	portStr := net.JoinHostPort(bnode.config.NodeIP, strconv.Itoa(bnode.config.NodePort))
 	route = append(route, nodeconfig.Peer{PeerID: bnode.config.NodeID, Addr: portStr})
 
 	// Reached a seller with the desired product. Send a reply.
 	if (bnode.config.Role == "seller" || bnode.config.Role == "both") && (bnode.config.SellerTarget == productName) {
 		log.Printf("Seller has found a buyer! Replying to %v along route %v\n", route[len(route)-2], route)
-		go bnode.reply(route, nodeconfig.Peer{PeerID: bnode.config.NodeID, Addr: net.JoinHostPort("", strconv.Itoa(bnode.config.NodePort))})
+		go bnode.reply(route, nodeconfig.Peer{PeerID: bnode.config.NodeID, Addr: net.JoinHostPort(bnode.config.NodeIP, strconv.Itoa(bnode.config.NodePort))})
 	}
 
 	log.Printf("Node %d received lookup request from %d\n", bnode.config.NodeID, buyerID)
@@ -163,6 +170,12 @@ func (bnode *BazaarNode) lookupProduct(route []nodeconfig.Peer, productName stri
 		// Flood the other peers
 		log.Printf("Node %d is flooding peer %d for lookup\n", bnode.config.NodeID, peer)
 		go func(peerAddr string) {
+
+			// make sure we don't hit ulimit
+			bnode.lookupList <- true
+			defer func(maxLookups chan bool) {
+				<-maxLookups
+			}(bnode.lookupList)
 
 			start := time.Now()
 
@@ -243,14 +256,14 @@ func (bnode *BazaarNode) reply(routeList []nodeconfig.Peer, sellerInfo nodeconfi
 
 		// log.Printf("Current recepent ID: %d: ", recipient.PeerID)
 		// log.Printf("Current routing List %v: ", routeList)
+		log.Printf("Sending reply RPC to %s\n", recipient.Addr)
 
-		go func(peerAddr string) {
-
-			start := time.Now()
+		start := time.Now()
+		go func(peerAddr string, startTime time.Time) {
 
 			con, err := rpc.Dial("tcp", peerAddr)
 			if err != nil {
-				log.Fatalln("dailing error: ", err)
+				log.Fatalln("dailing error in reply: ", err)
 			}
 
 			req := ReplyArgs{routeList, sellerInfo}
@@ -261,9 +274,9 @@ func (bnode *BazaarNode) reply(routeList []nodeconfig.Peer, sellerInfo nodeconfi
 				log.Fatalln("reply error: ", err)
 			}
 			end := time.Now()
-			bnode.reportLatency(start, end)
+			bnode.reportLatency(startTime, end)
 
-		}(recipient.Addr)
+		}(recipient.Addr, start)
 
 	}
 
@@ -274,6 +287,7 @@ func (bnode *BazaarNode) reply(routeList []nodeconfig.Peer, sellerInfo nodeconfi
 // what the buyer wishes to buy during this transaction
 type TransactionArgs struct {
 	CurrentTarget string
+	BuyerID       int
 }
 
 // TransactionResponse is empty for now
@@ -294,7 +308,7 @@ func (bnode *BazaarNode) buy(seller nodeconfig.Peer) error {
 			log.Fatalln("dailing error: ", err)
 		}
 
-		req := TransactionArgs{bnode.config.BuyerTarget}
+		req := TransactionArgs{CurrentTarget: bnode.config.BuyerTarget, BuyerID: bnode.config.NodeID}
 		var res TransactionResponse
 
 		err = con.Call("node.Sell", req, &res)
@@ -314,10 +328,10 @@ func (bnode *BazaarNode) buy(seller nodeconfig.Peer) error {
 // Sell runs the sell command
 func (bnode *BazaarNode) Sell(args TransactionArgs, reply *TransactionResponse) error {
 	log.Printf("Seller node %d selling item %s", bnode.config.NodeID, args.CurrentTarget)
-	return bnode.sell(args.CurrentTarget)
+	return bnode.sell(args.CurrentTarget, args.BuyerID)
 }
 
-func (bnode *BazaarNode) sell(target string) error {
+func (bnode *BazaarNode) sell(target string, buyerID int) error {
 
 	// target: the requested item by the buyer
 
@@ -334,7 +348,7 @@ func (bnode *BazaarNode) sell(target string) error {
 	if bnode.config.Items[targetID].Amount > 0 {
 
 		bnode.config.Items[targetID].Amount--
-		log.Printf("MOGUL MOVES!!!! 💰💰💰 Node %d sold %s, amount remaining %d 💰💰💰", bnode.config.NodeID, bnode.config.Items[targetID].Item, bnode.config.Items[targetID].Amount)
+		log.Printf("💰💰💰 Node %d sold %s to %d, amount remaining %d 💰💰💰", bnode.config.NodeID, bnode.config.Items[targetID].Item, buyerID, bnode.config.Items[targetID].Amount)
 
 	} else {
 
@@ -345,7 +359,7 @@ func (bnode *BazaarNode) sell(target string) error {
 			log.Printf("Seller node %d restocked %s", bnode.config.NodeID, bnode.config.Items[targetID].Item)
 
 			bnode.config.Items[targetID].Amount--
-			log.Printf("MOGUL MOVES!!!! 💰💰💰 Node %d sold %s, amount remaining %d 💰💰💰", bnode.config.NodeID, bnode.config.Items[targetID].Item, bnode.config.Items[targetID].Amount)
+			log.Printf("💰💰💰 Node %d sold %s to %d, amount remaining %d 💰💰💰", bnode.config.NodeID, bnode.config.Items[targetID].Item, buyerID, bnode.config.Items[targetID].Amount)
 
 		} else {
 
@@ -431,7 +445,7 @@ func (bnode *BazaarNode) init() {
 // buyerLoop is the lookup/buy loop for the buyer
 func (bnode *BazaarNode) buyerLoop() {
 	// wait before starting the buyer loop
-	time.Sleep(2 * time.Second)
+	time.Sleep(5 * time.Second)
 
 	for {
 
@@ -442,7 +456,7 @@ func (bnode *BazaarNode) buyerLoop() {
 		}
 
 		// Lookup request to neighbours
-		// portStr := net.JoinHostPort("", strconv.Itoa(bnode.config.NodePort))
+		// portStr := net.JoinHostPort(bnode.config.NodeIP, strconv.Itoa(bnode.config.NodePort))
 		args := LookupArgs{
 			ProductName: bnode.config.BuyerTarget,
 			HopCount:    bnode.config.MaxHops,

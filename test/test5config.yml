@@ -13,22 +13,16 @@ staticNodes:
     role: "none"
   2:
     role: "buyer"
-    items:
-      - item: "boars"
-        amount: 1
-        unlimited: true
+    buyeroptionlist:
+      - "boars"
   3:
     role: "buyer"
-    items:
-      - item: "boars"
-        amount: 1
-        unlimited: true
+    buyeroptionlist:
+      - "boars"
   4:
     role: "buyer"
-    items:
-      - item: "boars"
-        amount: 1
-        unlimited: true
+    buyeroptionlist:
+      - "boars"
 
 includeEdges:
   - [0,1]

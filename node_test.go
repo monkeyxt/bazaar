@@ -40,7 +40,7 @@ func TestLookupSimple(t *testing.T) {
 		return
 	}
 
-	portStr := net.JoinHostPort("", strconv.Itoa(testnode.config.NodePort))
+	portStr := net.JoinHostPort(testnode.config.NodeIP, strconv.Itoa(testnode.config.NodePort))
 	args := LookupArgs{
 		ProductName: "salt",
 		HopCount:    0,
@@ -126,10 +126,10 @@ func TestReplySimpleRPC(t *testing.T) {
 
 	// the reply args use test node B instead of A because test node B would
 	// have called the lookup method.
-	portStr := net.JoinHostPort("", strconv.Itoa(testNodeB.config.NodePort))
+	portStr := net.JoinHostPort(testNodeB.config.NodeIP, strconv.Itoa(testNodeB.config.NodePort))
 	args := ReplyArgs{
 		RouteList:  []nodeconfig.Peer{{PeerID: testNodeB.config.NodeID, Addr: portStr}},
-		SellerInfo: nodeconfig.Peer{PeerID: testNodeB.config.NodeID, Addr: net.JoinHostPort("", strconv.Itoa(testNodeB.config.NodePort))},
+		SellerInfo: nodeconfig.Peer{PeerID: testNodeB.config.NodeID, Addr: net.JoinHostPort(testNodeB.config.NodeIP, strconv.Itoa(testNodeB.config.NodePort))},
 	}
 
 	var rpcResponse ReplyResponse
@@ -280,7 +280,7 @@ func TestLookupLinearRPC(t *testing.T) {
 	<-secondDoneChan
 	<-thirdDoneChan
 
-	portStr := net.JoinHostPort("", strconv.Itoa(testFirstNode.config.NodePort))
+	portStr := net.JoinHostPort(testFirstNode.config.NodeIP, strconv.Itoa(testFirstNode.config.NodePort))
 	args := LookupArgs{
 		ProductName: "salt",
 		HopCount:    testFirstNode.config.MaxHops - 1,

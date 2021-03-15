@@ -5,16 +5,12 @@ outputDir: test6nodes
 staticNodes:
   0:
     role: "buyer"
-    items:
-      - item: "salt"
-        amount: 1
-        unlimited: true
+    buyeroptionlist:
+      - "salt"
   1:
     role: "buyer"
-    items:
-      - item: "salt"
-        amount: 1
-        unlimited: true
+    buyeroptionlist:
+      - "salt"
   2:
     role: "seller"
     items:

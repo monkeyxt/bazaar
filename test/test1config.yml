@@ -11,9 +11,7 @@ staticNodes:
         unlimited: true
   1:
     role: "buyer"
-    items:
-      - item: "fish"
-        amount: 1
-        unlimited: true
+    buyeroptionlist:
+      - "fish"
 includeEdges:
   - [0,1]

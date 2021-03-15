@@ -5,22 +5,16 @@ outputDir: ./output
 staticNodes:
   0:
     role: "buyer"
-    items:
-      - item: "boars"
-        amount: 1
-        unlimited: true
+    buyeroptionlist:
+      - "boars"
   1:
     role: "buyer"
     items:
-      - item: "boars"
-        amount: 1
-        unlimited: true
+      - "boars"
   2:
     role: "buyer"
-    items:
-      - item: "boars"
-        amount: 1
-        unlimited: true
+    buyeroptionlist:
+      - "boars"
 excludeEdges:
   - [1,2]
 includeEdges:

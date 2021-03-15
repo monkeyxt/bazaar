@@ -5,10 +5,8 @@ outputDir: test2nodes
 staticNodes:
   0:
     role: "buyer"
-    items:
-      - item: "fish"
-        amount: 1
-        unlimited: false
+    buyeroptionlist:
+      - "fish"
   1:
     role: "seller"
     items:

@@ -16,9 +16,16 @@ import (
 )
 
 var (
-	config           string
-	netConf          NetworkConfig
-	verbose          bool
+	config  string
+	netConf NetworkConfig
+	verbose bool
+
+	// in case the user doesn't want to write to file
+	dryRun bool
+
+	// hostArray is used in case the user does not want to put the hosts in
+	// a config and would rather pass in hosts as a command line argument
+	hostArray        []string
 	GenerateNodesCmd = &cobra.Command{
 		Use:   "generatenodes",
 		Short: "generatenodes generates a network configuration for the bazaar based on various constraints.",
@@ -69,6 +76,8 @@ func init() {
 
 	GenerateNodesCmd.PersistentFlags().StringVar(&config, "config", "", "config file (default is ./generatenodes.yaml)")
 	GenerateNodesCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
+	GenerateNodesCmd.PersistentFlags().BoolVar(&dryRun, "dry-run", false, "Dry run the generator. No files will be written. Recommended to be run with --verbose.")
+	GenerateNodesCmd.PersistentFlags().StringArrayVar(&hostArray, "host", netConf.Hosts, "A host to add to the host list")
 	GenerateNodesCmd.MarkFlagRequired("config")
 
 	err = GenerateNodesCmd.Execute()
@@ -129,8 +138,8 @@ func main() {
 
 		// if we have any hosts, always assign node IPs by the host list.
 		// otherwise use localhost
-		if len(netConf.Hosts) > 0 {
-			temp.NodeIP = netConf.Hosts[hostIdx%len(netConf.Hosts)]
+		if len(hostArray) > 0 {
+			temp.NodeIP = hostArray[hostIdx%len(hostArray)]
 		} else {
 			temp.NodeIP = "localhost"
 		}
@@ -236,7 +245,9 @@ func main() {
 	for k := range netConf.StaticNodes {
 		nodes = append(nodes, netConf.StaticNodes[k])
 	}
-	writeFiles(nodes, netConf.OutputDir)
+	if !dryRun {
+		writeFiles(nodes, netConf.OutputDir)
+	}
 	log.Printf("Network generation has is done!")
 
 }
