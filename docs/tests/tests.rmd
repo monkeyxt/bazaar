@@ -1,0 +1,218 @@
+---
+output: 
+  pdf_document:
+    citation_package: natbib
+    keep_tex: true
+    fig_caption: true
+    latex_engine: pdflatex
+    template: svm-latex-ms.tex
+bibliography: master.bib
+header-includes:
+  -  \usepackage{hyperref}
+  -  \usepackage{graphicx}
+biblio-style: apsr
+title: "CS 677 Lab 1 Test Report"
+author:
+- name: Dan Cline, Kyle Stevens, Tian Xia
+  affiliation: UMass Amherst
+abstract: "This document is a report of all the tests ran on the system, and presents sample outputs of each test. To reproduce the results of the tests,  run `runtest.sh` in the `test` directory on some `networkconfig.yml`."
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+geometry: margin=1in
+fontfamily: mathpazo
+fontsize: 11pt
+# spacing: double
+endnote: no
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache=TRUE,
+                      message=FALSE, warning=FALSE,
+                      fig.path='figs/',
+                      cache.path = '_cache/',
+                      fig.process = function(x) {
+                      x2 = sub('-\\d+([.][a-z]+)$', '\\1', x)
+                      if (file.rename(x, x2)) x2 else x
+                      })
+
+defOut <- knitr::knit_hooks$get("plot")  # save the default plot hook 
+knitr::knit_hooks$set(plot = function(x, options) {  # set new plot hook ...
+  x <- defOut(x, options)  # first apply the default hook
+  if(!is.null(options$wrapfigure)) {  # then, if option wrapfigure is given ...
+    # create the new opening string for the wrapfigure environment ...
+    wf <- sprintf("\\begin{wrapfigure}{%s}{%g\\textwidth}", options$wrapfigure[[1]], options$wrapfigure[[2]])
+    x  <- gsub("\\begin{figure}", wf, x, fixed = T)  # and replace the default one with it.
+    x  <- gsub("{figure}", "{wrapfigure}", x, fixed = T)  # also replace the environment ending
+  }
+  return(x)
+})
+
+library(DiagrammeR)
+```
+
+
+# Test 1
+
+Test Description: Assign one peer to be a buyer of fish and another to be a seller of fish. Ensure that all fish is sold and restocked forever. In `test1config.yml`, the number of fishes for the seller node is assigned to 10 and the unlimited flag is set to true, so that fish is sold throughout.
+\newline
+
+\noindent Node Assignment:
+
+nodes       address            role                sell                buy
+--------    ----------------   ----------------    ----------------    ----------------
+node0       localhost:10000    seller              fish (unlimited)    N/A
+node1       localhost:10001    buyer               N/A                 fish
+---------   ----------------   ----------------    ----------------    ----------------
+
+\noindent Network Topology:
+\newline
+
+```{r echo=FALSE, dev='png', out.width="20%", fig.align='center'}
+library("DiagrammeR")
+grViz("
+      digraph test {
+        rankdir=LR;
+        node [shape = circle]
+        0, 1
+        0 -> 1 [arrowhead = none];
+      }
+ ")
+```
+
+\noindent Program Behaviour: Buyer node `node1` continuously buys from seller node `node0`. The number of fish remaining for the seller goes from 10 to 0 and gets restocked once it hits 0.
+
+# Test 2
+
+Test Description: Assign one peer to be a buyer of fish and another to be a seller of fish and boar. Ensure that all fish is sold and restocked forever, but no boar is sold. In `test2config.yml`, the number of fishes for the seller node is assigned to 10 and the unlimited flag is set to true, so that fish is sold throughout. The number of boars for the seller node is also set to 10.
+\newline
+
+\noindent Node Assignment:
+
+nodes       address            role                sell                buy
+--------    ----------------   ----------------    ----------------    ----------------
+node0       localhost:10000    seller              fish/boar           N/A
+node1       localhost:10001    buyer               N/A                 fish
+---------   ----------------   ----------------    ----------------    ----------------
+
+\noindent Network Topology:
+\newline
+
+```{r echo=FALSE, dev='png', out.width="20%", fig.align='center'}
+library("DiagrammeR")
+grViz("
+      digraph test {
+        rankdir=LR;
+        node [shape = circle]
+        0, 1
+        0 -> 1 [arrowhead = none];
+      }
+ ")
+```
+
+\noindent Program Behaviour: Buyer node `node1` continuously buys from seller node `node0`. The number of fish remaining for the seller goes from 10 to 0 and gets restocked once it hits 0. No boar is sold to `node1`.
+
+# Test 3
+
+Randomly assign buyer and seller roles. Ensure that items keep being sold throughout. In `test3config.yml`, the roles of the two nodes are set to `random`. The number of salt for the seller node is assigned to 1 and the unlimited flag is set to true, so that salt is sold throughout. The buyer target for the randomly chosen buyer node is set to salt. 
+\newline
+
+\noindent Node Assignment:
+
+nodes       address            role                sell                buy
+--------    ----------------   ----------------    ----------------    ----------------
+node0       localhost:10000    random              salt(unlimited)     N/A
+node1       localhost:10001    random              N/A                 salt
+---------   ----------------   ----------------    ----------------    ----------------
+
+\noindent Network Topology:
+\newline
+
+```{r echo=FALSE, dev='png', out.width="20%", fig.align='center'}
+library("DiagrammeR")
+grViz("
+      digraph test {
+        rankdir=LR;
+        node [shape = circle]
+        0, 1
+        0 -> 1 [arrowhead = none];
+      }
+ ")
+```
+
+\noindent Program Behaviour: Salt is sold throughout and restocked if one node is a buyer and the other is a seller. No products are sold if both nodes have the same role.
+
+# Test 4
+
+One seller of boar, 3 buyers of boars, the remaining peers have no role. Fix the neighborhood structure so that buyers and sellers are 2-hop away in the peer-to-peer overlay network. Ensure that all items are sold and restocked and that all buyers can buy forever.
+\newline
+
+\noindent Node Assignment:
+
+nodes       address            role                sell                buy
+--------    ----------------   ----------------    ----------------    ----------------
+node0       localhost:10003    seller              boar                N/A
+node1       localhost:10004    none                N/A                 N/A
+node2       localhost:10001    buyer               N/A                 boar
+node3       localhost:10002    buyer               N/A                 boar
+node4       localhost:10000    buyer               N/A                 boar
+---------   ----------------   ----------------    ----------------    ----------------
+
+\noindent Network Topology:
+\newline
+
+```{r echo=FALSE, dev='png', out.width="50%", fig.align='center'}
+library("DiagrammeR")
+grViz("
+      digraph test {
+        rankdir=LR;
+        overlap = false;
+        splines = true;
+        node [shape = circle];
+    
+        0 -> 1 [arrowhead = none];
+        1 -> 2 [arrowhead = none];
+        1 -> 3 [arrowhead = none];
+        1 -> 4 [arrowhead = none];
+        2 -> 3 [arrowhead = none];
+        2 -> 4 [arrowhead = none];
+        3 -> 4 [arrowhead = none];
+      }
+ ")
+```
+
+# Test 6
+
+Simulate a race condition in buy() wherein a seller has stock of 1 for an item but then replies to multiple buyers.
+\newline
+
+\noindent Node Assignment:
+
+nodes       address            role                sell                buy
+--------    ----------------   ----------------    ----------------    ----------------
+node0       localhost:10002    buyer               N/A                 salt
+node1       localhost:10000    buyer               N/A                 salt
+node2       localhost:10001    seller              salt                N/A
+---------   ----------------   ----------------    ----------------    ----------------
+
+\noindent Network Topology:
+\newline
+
+```{r echo=FALSE, dev='png', out.width="30%", fig.align='center'}
+library("DiagrammeR")
+grViz("
+      digraph test {
+        rankdir=LR;
+        node [shape = circle];
+        2 -> 0 [arrowhead = none];
+        2 -> 1 [arrowhead = none];
+      }
+ ")
+```
+
+<!--
+# References
+\setlength{\parindent}{-0.2in}
+\setlength{\leftskip}{0.2in}
+\setlength{\parskip}{8pt}
+\vspace*{-0.2in}
+\noindent
+-->
