@@ -25,3 +25,6 @@ excludeEdges:
   - [1,2]
 includeEdges:
   - [0,1]
+# Example of a host list for the nodes to be run on
+hosts:
+  - "localhost"

@@ -115,7 +115,9 @@ func main() {
 
 	// set ports starting at 100000, also make peer maps
 	// also make sure nodeid is set
+	// also set the host
 	nodePort := 10000
+	hostIdx := 0
 	for k := range netConf.StaticNodes {
 		// TODO: change lock to &sync.Mutex
 		temp := netConf.StaticNodes[k]
@@ -124,7 +126,17 @@ func main() {
 		temp.NodeID = k
 		temp.MaxPeers = netConf.K
 		temp.MaxHops = netConf.MaxHops
+
+		// if we have any hosts, always assign node IPs by the host list.
+		// otherwise use localhost
+		if len(netConf.Hosts) > 0 {
+			temp.NodeIP = netConf.Hosts[hostIdx%len(netConf.Hosts)]
+		} else {
+			temp.NodeIP = "localhost"
+		}
+
 		nodePort++
+		hostIdx++
 		netConf.StaticNodes[k] = temp
 	}
 
@@ -152,8 +164,8 @@ func main() {
 		// TODO: configure host in config, for now just localhost
 		node1 := netConf.StaticNodes[edge[0]]
 		node2 := netConf.StaticNodes[edge[1]]
-		node2.Peers[node1.NodeID] = net.JoinHostPort("localhost", strconv.Itoa(node1.NodePort))
-		node1.Peers[node2.NodeID] = net.JoinHostPort("localhost", strconv.Itoa(node2.NodePort))
+		node2.Peers[node1.NodeID] = net.JoinHostPort(node1.NodeIP, strconv.Itoa(node1.NodePort))
+		node1.Peers[node2.NodeID] = net.JoinHostPort(node2.NodeIP, strconv.Itoa(node2.NodePort))
 		netConf.StaticNodes[edge[0]] = node1
 		netConf.StaticNodes[edge[1]] = node2
 	}
@@ -205,8 +217,8 @@ func main() {
 
 			// we are all set to create this edge then
 			// TODO: turn this monolith into something stateful
-			node2.Peers[node1.NodeID] = net.JoinHostPort("localhost", strconv.Itoa(node1.NodePort))
-			node1.Peers[node2.NodeID] = net.JoinHostPort("localhost", strconv.Itoa(node2.NodePort))
+			node2.Peers[node1.NodeID] = net.JoinHostPort(node1.NodeIP, strconv.Itoa(node1.NodePort))
+			node1.Peers[node2.NodeID] = net.JoinHostPort(node2.NodeIP, strconv.Itoa(node2.NodePort))
 			netConf.StaticNodes[id1] = node1
 			netConf.StaticNodes[id2] = node2
 		}

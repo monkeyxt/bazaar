@@ -16,7 +16,8 @@ type NetworkConfig struct {
 	// that have already been named and specified.
 	// excludeEdges is a list of edges to specifically exclude, and not connect
 	// in the network.
-	ExcludeEdges [][2]int                      `yaml:"excludeEdges"`
+	ExcludeEdges [][2]int                      `yaml:"excludeEdges,inline"`
 	IncludeEdges [][2]int                      `yaml:"includeEdges,inline"`
 	StaticNodes  map[int]nodeconfig.NodeConfig `yaml:"staticNodes,inline"`
+	Hosts        []string                      `yaml:"hosts"`
 }
