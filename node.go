@@ -436,12 +436,10 @@ func (bnode *BazaarNode) buyerLoop() {
 	for {
 
 		// Generate a buy request
-		for targetID := range bnode.config.Items {
-			if bnode.config.Items[targetID].Amount != 0 {
-				bnode.config.BuyerTarget = bnode.config.Items[targetID].Item
-			}
+		if len(bnode.config.BuyerOptionList) != 0 {
+			bnode.config.BuyerTarget = bnode.config.BuyerOptionList[rand.Intn(len(bnode.config.BuyerOptionList))]
+			log.Printf("Node %d plans to buy %s", bnode.config.NodeID, bnode.config.BuyerTarget)
 		}
-		log.Printf("Node %d plans to buy %s", bnode.config.NodeID, bnode.config.BuyerTarget)
 
 		// Lookup request to neighbours
 		// portStr := net.JoinHostPort("", strconv.Itoa(bnode.config.NodePort))
@@ -454,8 +452,8 @@ func (bnode *BazaarNode) buyerLoop() {
 
 		var rpcResponse LookupResponse
 		go bnode.Lookup(args, &rpcResponse)
-
 		log.Printf("Waiting to retrieve sellers...")
+
 		// Buy from the list of available sellers
 		time.Sleep(200 * time.Millisecond)
 		var sellerList []nodeconfig.Peer

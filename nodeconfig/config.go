@@ -14,6 +14,9 @@ type NodeConfig struct {
 	MaxPeers int            `yaml:"maxpeers"`
 	MaxHops  int            `yaml:"maxhops"`
 
+	// NodeIP is the host address of the current node
+	NodeIP string `yaml:"nodeip"`
+
 	// NodeID is the ID of the node
 	NodeID int `yaml:"nodeid"`
 
@@ -23,11 +26,14 @@ type NodeConfig struct {
 	// SellerList is a list of sellers for the buyer to choose from
 	SellerList []int `yaml:"-"`
 
-	// Mu is the mutex lock for the current node
-	Mu sync.Mutex `yaml:"-"`
+	// BuyerOptionList is a list of items for the buyer to choose from
+	BuyerOptionList []string `yaml:",flow"`
 
 	// BuyerTarget is the item that the buyer wishes to buy
 	BuyerTarget string `yaml:"-"`
+
+	// Mu is the mutex lock for the current node
+	Mu sync.Mutex `yaml:"-"`
 
 	// SellerTarget is the item that the seller is currently selling
 	SellerTarget string `yaml:"-"`

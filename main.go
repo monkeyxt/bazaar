@@ -31,6 +31,7 @@ func main() {
 	sigc := make(chan os.Signal, 1)
 	signal.Notify(sigc, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 
+	// Create node based on specified configuration file
 	node, err := CreateNodeFromConfigPath(config)
 	if err != nil {
 		log.Fatalf("Error creating node from config at %s: %s", defaultConfig, err)
