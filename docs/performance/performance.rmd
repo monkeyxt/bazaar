@@ -1,0 +1,68 @@
+---
+output: 
+  pdf_document:
+    citation_package: natbib
+    keep_tex: true
+    fig_caption: true
+    latex_engine: pdflatex
+    template: svm-latex-ms.tex
+bibliography: master.bib
+header-includes:
+  -  \usepackage{hyperref}
+  -  \usepackage{graphicx}
+biblio-style: apsr
+title: "CS 677 Lab 1 Performance Evaluation Report"
+author:
+- name: Dan Cline, Kyle Stevens, Tian Xia
+  affiliation: UMass Amherst, Amherst College
+abstract: "This document provides a performance evaluation of our implementation."
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+geometry: margin=1in
+fontfamily: mathpazo
+fontsize: 11pt
+# spacing: double
+endnote: no
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache=TRUE,
+                      message=FALSE, warning=FALSE,
+                      fig.path='figs/',
+                      cache.path = '_cache/',
+                      fig.process = function(x) {
+                      x2 = sub('-\\d+([.][a-z]+)$', '\\1', x)
+                      if (file.rename(x, x2)) x2 else x
+                      })
+
+defOut <- knitr::knit_hooks$get("plot")  # save the default plot hook 
+knitr::knit_hooks$set(plot = function(x, options) {  # set new plot hook ...
+  x <- defOut(x, options)  # first apply the default hook
+  if(!is.null(options$wrapfigure)) {  # then, if option wrapfigure is given ...
+    # create the new opening string for the wrapfigure environment ...
+    wf <- sprintf("\\begin{wrapfigure}{%s}{%g\\textwidth}", options$wrapfigure[[1]], options$wrapfigure[[2]])
+    x  <- gsub("\\begin{figure}", wf, x, fixed = T)  # and replace the default one with it.
+    x  <- gsub("{figure}", "{wrapfigure}", x, fixed = T)  # also replace the environment ending
+  }
+  return(x)
+})
+
+library(DiagrammeR)
+```
+
+
+# Performance on Local Machine
+
+# Performance Over a Network
+
+# Performance of Client Search Requests
+
+# Performance of Concurrent Requests
+
+<!--
+# References
+\setlength{\parindent}{-0.2in}
+\setlength{\leftskip}{0.2in}
+\setlength{\parskip}{8pt}
+\vspace*{-0.2in}
+\noindent
+-->
