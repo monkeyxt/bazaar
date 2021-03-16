@@ -153,7 +153,7 @@ func TestBuySimple(t *testing.T) {
 		return
 	}
 
-	transactionArgs := TransactionArgs{"salt"}
+	transactionArgs := TransactionArgs{CurrentTarget: "salt", BuyerID: testnode.config.NodeID}
 	var transactionResponse TransactionResponse
 	err = testnode.Sell(transactionArgs, &transactionResponse)
 	if err != nil {
