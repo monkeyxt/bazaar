@@ -234,7 +234,7 @@ func (bnode *BazaarNode) lookupProduct(route []nodeconfig.Peer, productName stri
 
 	// Reached a seller with the desired product. Send a reply.
 	if (bnode.config.Role == "seller" || bnode.config.Role == "both") && (bnode.config.SellerTarget == productName) {
-		log.Printf("Seller has found a buyer! Replying to %v along route %v\n", route[len(route)-2], route)
+		log.Printf("Seller has found a buyer! Replying to %d along route %v\n", buyerID, route)
 		go bnode.reply(route, nodeconfig.Peer{PeerID: bnode.config.NodeID, Addr: net.JoinHostPort(bnode.config.NodeIP, strconv.Itoa(bnode.config.NodePort))})
 	}
 
