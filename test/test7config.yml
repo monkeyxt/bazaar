@@ -1,0 +1,157 @@
+# Stress test for larger networks with 5 buyers and 5 sellers for each item
+K: 7
+N: 50
+maxHops: 7
+outputDir: test7nodes
+staticNodes:
+  0:
+    role: "buyer"
+    buyeroptionlist:
+      - "salt"
+  1:
+    role: "buyer"
+    buyeroptionlist:
+      - "salt"
+  2:
+    role: "buyer"
+    buyeroptionlist:
+      - "salt"
+  3:
+    role: "buyer"
+    buyeroptionlist:
+      - "salt"
+  4:
+    role: "buyer"
+    buyeroptionlist:
+      - "salt"
+  5:
+    role: "seller"
+    items:
+      - item: "salt"
+        amount: 10
+        unlimited: true
+  6:
+    role: "seller"
+    items:
+      - item: "salt"
+        amount: 10
+        unlimited: true
+  7:
+    role: "seller"
+    items:
+      - item: "salt"
+        amount: 10
+        unlimited: true
+  8:
+    role: "seller"
+    items:
+      - item: "salt"
+        amount: 10
+        unlimited: true
+  9:
+    role: "seller"
+    items:
+      - item: "salt"
+        amount: 10
+        unlimited: true
+  10:
+    role: "buyer"
+    buyeroptionlist:
+      - "fish"
+  11:
+    role: "buyer"
+    buyeroptionlist:
+      - "fish"
+  12:
+    role: "buyer"
+    buyeroptionlist:
+      - "fish"
+  13:
+    role: "buyer"
+    buyeroptionlist:
+      - "fish"
+  14:
+    role: "buyer"
+    buyeroptionlist:
+      - "fish"
+  15:
+    role: "seller"
+    items:
+      - item: "fish"
+        amount: 10
+        unlimited: true
+  16:
+    role: "seller"
+    items:
+      - item: "fish"
+        amount: 10
+        unlimited: true
+  17:
+    role: "seller"
+    items:
+      - item: "fish"
+        amount: 10
+        unlimited: true
+  18:
+    role: "seller"
+    items:
+      - item: "fish"
+        amount: 10
+        unlimited: true
+  19:
+    role: "seller"
+    items:
+      - item: "fish"
+        amount: 10
+        unlimited: true
+  20:
+    role: "buyer"
+    buyeroptionlist:
+      - "boars"
+  21:
+    role: "buyer"
+    buyeroptionlist:
+      - "boars"
+  22:
+    role: "buyer"
+    buyeroptionlist:
+      - "boars"
+  23:
+    role: "buyer"
+    buyeroptionlist:
+      - "boars"
+  24:
+    role: "buyer"
+    buyeroptionlist:
+      - "boars"
+  25:
+    role: "seller"
+    items:
+      - item: "boars"
+        amount: 10
+        unlimited: true
+  26:
+    role: "seller"
+    items:
+      - item: "boars"
+        amount: 10
+        unlimited: true
+  27:
+    role: "seller"
+    items:
+      - item: "boars"
+        amount: 10
+        unlimited: true
+  28:
+    role: "seller"
+    items:
+      - item: "boars"
+        amount: 10
+        unlimited: true
+  29:
+    role: "seller"
+    items:
+      - item: "boars"
+        amount: 10
+        unlimited: true
+    

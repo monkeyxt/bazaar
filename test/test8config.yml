@@ -1,0 +1,5 @@
+# Stress test for larger networks with random nodes
+K: 7
+N: 50
+maxHops: 7
+outputDir: test8nodes
