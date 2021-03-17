@@ -9,7 +9,7 @@ staticNodes:
       - "boars"
   1:
     role: "buyer"
-    items:
+    buyeroptionlist:
       - "boars"
   2:
     role: "buyer"

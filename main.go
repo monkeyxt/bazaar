@@ -10,16 +10,26 @@ import (
 )
 
 const defaultConfig string = "bazaar.yml"
+const defaultLogFile string = "log.txt"
 
 func main() {
 
+	// Seed math rand for more random looking results
+	err := SeedMathRand()
+	if err != nil {
+		log.Fatalf("Error seeding math rand: %s\n", err)
+		return
+	}
+
 	// Load config location from commandline flag
 	var config string
-	flag.StringVar(&config, "config", defaultConfig, "")
+	var logFileLocation string
+	flag.StringVar(&config, "config", defaultConfig, "The config used to define node behavior (default is bazaar.yml).")
+	flag.StringVar(&logFileLocation, "logfile", defaultLogFile, "The file which logs should be written to (default is log.txt).")
 	flag.Parse()
 
 	// Create file to dump the node log
-	logFile, err := os.OpenFile("log.txt", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
+	logFile, err := os.OpenFile(logFileLocation, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
 	if err != nil {
 		log.Fatalf("Error creating log: %s", err)
 		return

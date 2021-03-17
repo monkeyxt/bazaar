@@ -1,6 +1,8 @@
 package main
 
 import (
+	crand "crypto/rand"
+	"encoding/binary"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -8,6 +10,7 @@ import (
 	"net"
 	"net/rpc"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/rjected/bazaar/nodeconfig"
@@ -19,14 +22,31 @@ type BazaarNode struct {
 	config        nodeconfig.NodeConfig
 	sellerChannel chan nodeconfig.Peer
 
-	// lookupList is to make sure we don't hit the limit on the number of file
-	// descriptors
-	lookupList chan bool
+	// peerClients is a map from a peerID to an rpc Client that we use for
+	// communicating with that peer.
+	peerClients    map[int]*rpc.Client
+	peerClientLock *sync.Mutex
 }
 
 // BazaarServer exposes methods for letting a node listen for RPC
 type BazaarServer struct {
 	node *BazaarNode
+}
+
+// SeedMathRand uses crypto randomness to seed the math prng. This is so we can
+// seem more random when not testing, and be deterministic when testing.
+// rand.Seed uses a seed of 1 when not explicitly seeded.
+func SeedMathRand() error {
+	var readInt [8]byte
+	_, err := crand.Read(readInt[:])
+	if err != nil {
+		return fmt.Errorf("error reading from crypto rand for seeding: %s", err)
+	}
+
+	seed := binary.BigEndian.Uint64(readInt[:])
+	rand.Seed(int64(seed))
+
+	return nil
 }
 
 // CreateNodeFromConfigFile loads initial node state from a config file passed as
@@ -52,6 +72,25 @@ func CreateNodeFromConfigFile(configFile []byte) (*BazaarNode, error) {
 		return nil, fmt.Errorf("too many peers in the peers list. There are %d, the maximum is %d", len(node.config.Peers), node.config.MaxPeers)
 	}
 
+	if node.config.Role == "random" {
+		randRole := rand.Intn(4)
+		switch randRole {
+		case 0:
+			node.config.Role = "buyer"
+			node.config.BuyerOptionList = GenerateRandomItems()
+		case 1:
+			node.config.Role = "seller"
+			node.config.Items = CreateRandomSellerList(64)
+		case 2:
+			node.config.Role = "both"
+			node.config.BuyerOptionList = GenerateRandomItems()
+			node.config.Items = CreateRandomSellerList(64)
+		case 3:
+			node.config.Role = "none"
+		}
+
+	}
+
 	if node.config.Role == "seller" || node.config.Role == "both" {
 		// NOTE: project wasnt specific on how to select seller items, so we pick at
 		// random
@@ -64,7 +103,6 @@ func CreateNodeFromConfigFile(configFile []byte) (*BazaarNode, error) {
 		// if available items is empty just pick from len(items)
 		var randItemIdx int
 		if len(availableItems) == 0 {
-			randItemIdx = rand.Intn(len(node.config.Items))
 			log.Println("NO ITEMS AVAILABLE! Picking no items...")
 		} else {
 			// pick item at random from the list of available items
@@ -77,13 +115,67 @@ func CreateNodeFromConfigFile(configFile []byte) (*BazaarNode, error) {
 
 	}
 
+	log.Printf("Here is the node config: %v\n", node.config)
+
+	// initialize the map for peer clients
+	node.peerClients = make(map[int]*rpc.Client)
+	node.peerClientLock = &sync.Mutex{}
+	node.config.Mu = &sync.Mutex{}
+
 	// initialize the seller channel, just have 100 max for now
 	node.sellerChannel = make(chan nodeconfig.Peer, 100)
 
-	// initialize lookup limit channel
-	node.lookupList = make(chan bool, 1024)
-
 	return &node, nil
+}
+
+// CreateRandomSellerList creates a list of random items, with amounts, for a
+// seller.
+func CreateRandomSellerList(maxItems int) []nodeconfig.ItemAmount {
+	possibleItems := []string{"salt", "fish", "boars"}
+
+	// generates the items to potentially pick.
+	pickItems := rand.Perm(len(possibleItems))
+
+	// generates from [1,len(possibleItems)+1)
+	numItems := rand.Intn(len(possibleItems)) + 1
+	items := make([]nodeconfig.ItemAmount, numItems)
+
+	for idx, item := range items {
+		item.Item = possibleItems[pickItems[idx]]
+
+		// max 64
+		item.Amount = rand.Intn(maxItems)
+		if rand.Uint64()%2 == 1 {
+			item.Unlimited = true
+		} else {
+			item.Unlimited = false
+		}
+		items[idx] = item
+	}
+
+	return items
+
+}
+
+// GenerateRandomItems creates a list of random items for a buyer
+func GenerateRandomItems() []string {
+
+	possibleItems := []string{"salt", "fish", "boars"}
+
+	// generates the items to potentially pick.
+	pickItems := rand.Perm(len(possibleItems))
+
+	// generates from [1,len(possibleItems))
+	numItems := rand.Intn(len(possibleItems)) + 1
+	log.Printf("selecting %d items for buyer\n", numItems)
+	items := make([]string, numItems)
+
+	for idx := range items {
+		items[idx] = possibleItems[pickItems[idx]]
+	}
+
+	log.Printf("Returning %v for buyer\n", items)
+	return items
 }
 
 // GetAvailableItems returns all items available for the given node.
@@ -169,39 +261,7 @@ func (bnode *BazaarNode) lookupProduct(route []nodeconfig.Peer, productName stri
 
 		// Flood the other peers
 		log.Printf("Node %d is flooding peer %d for lookup\n", bnode.config.NodeID, peer)
-		go func(peerAddr string) {
-
-			// make sure we don't hit ulimit
-			bnode.lookupList <- true
-			defer func(maxLookups chan bool) {
-				<-maxLookups
-			}(bnode.lookupList)
-
-			start := time.Now()
-
-			con, err := rpc.Dial("tcp", peerAddr)
-			if err != nil {
-				log.Fatalln("dailing error in lookup: ", err)
-			}
-
-			req := LookupArgs{
-				ProductName: productName,
-				HopCount:    hopcount - 1,
-				BuyerID:     buyerID,
-				Route:       route,
-			}
-			var res LookupResponse
-
-			err = con.Call("node.Lookup", req, &res)
-			if err != nil {
-				log.Fatalln("reply error: ", err)
-			}
-
-			log.Printf("Lookup to %s finished\n", peerAddr)
-			end := time.Now()
-			bnode.reportLatency(start, end)
-
-		}(addr)
+		go bnode.callLookupRPC(route, nodeconfig.Peer{PeerID: peer, Addr: addr}, productName, hopcount, buyerID)
 
 	}
 
@@ -254,29 +314,8 @@ func (bnode *BazaarNode) reply(routeList []nodeconfig.Peer, sellerInfo nodeconfi
 		var recipient nodeconfig.Peer
 		recipient, routeList = routeList[len(routeList)-2], routeList[:len(routeList)-1]
 
-		// log.Printf("Current recepent ID: %d: ", recipient.PeerID)
-		// log.Printf("Current routing List %v: ", routeList)
 		log.Printf("Sending reply RPC to %s\n", recipient.Addr)
-
-		start := time.Now()
-		go func(peerAddr string, startTime time.Time) {
-
-			con, err := rpc.Dial("tcp", peerAddr)
-			if err != nil {
-				log.Fatalln("dailing error in reply: ", err)
-			}
-
-			req := ReplyArgs{routeList, sellerInfo}
-			var res ReplyResponse
-
-			err = con.Call("node.Reply", req, &res)
-			if err != nil {
-				log.Fatalln("reply error: ", err)
-			}
-			end := time.Now()
-			bnode.reportLatency(startTime, end)
-
-		}(recipient.Addr, start)
+		go bnode.callReplyRPC(recipient, routeList, sellerInfo)
 
 	}
 
@@ -298,28 +337,7 @@ type TransactionResponse struct {
 func (bnode *BazaarNode) buy(seller nodeconfig.Peer) error {
 
 	log.Printf("Node %d buying from seller node %d", bnode.config.NodeID, seller.PeerID)
-
-	go func(peerAddr string) {
-
-		start := time.Now()
-
-		con, err := rpc.Dial("tcp", peerAddr)
-		if err != nil {
-			log.Fatalln("dailing error: ", err)
-		}
-
-		req := TransactionArgs{CurrentTarget: bnode.config.BuyerTarget, BuyerID: bnode.config.NodeID}
-		var res TransactionResponse
-
-		err = con.Call("node.Sell", req, &res)
-		if err != nil {
-			log.Fatalln("reply error: ", err)
-		}
-
-		end := time.Now()
-		bnode.reportLatency(start, end)
-
-	}(seller.Addr)
+	go bnode.callSellRPC(seller)
 
 	return nil
 
@@ -334,7 +352,6 @@ func (bnode *BazaarNode) Sell(args TransactionArgs, reply *TransactionResponse) 
 func (bnode *BazaarNode) sell(target string, buyerID int) error {
 
 	// target: the requested item by the buyer
-
 	// Extract the itemID for the requested item
 	var targetID int
 	for itemID := range bnode.config.Items {

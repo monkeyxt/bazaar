@@ -33,7 +33,7 @@ type NodeConfig struct {
 	BuyerTarget string `yaml:"-"`
 
 	// Mu is the mutex lock for the current node
-	Mu sync.Mutex `yaml:"-"`
+	Mu *sync.Mutex `yaml:"-"`
 
 	// SellerTarget is the item that the seller is currently selling
 	SellerTarget string `yaml:"-"`
