@@ -1,0 +1,7 @@
+K: 20
+N: 7
+maxHops: 11
+outputDir: ./output
+# Example of a host list for the nodes to be run on
+hosts:
+  - "localhost"

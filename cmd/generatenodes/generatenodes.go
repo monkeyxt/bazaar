@@ -59,7 +59,7 @@ var (
 					os.Exit(1)
 				}
 
-				err = viper.UnmarshalExact(&netConf)
+				err = viper.Unmarshal(&netConf)
 				if err != nil {
 					log.Fatal("Unable to unmarshal network config: ", err.Error())
 				}
@@ -96,6 +96,16 @@ func main() {
 		log.Fatal("The number of pre configured nodes exceeds the maximum number of nodes, please change N or the number of staticNodes")
 	}
 
+	// the role that newly created nodes will have - if we have static nodes
+	// then this should be "none", otherwise "random"
+	newNodeRole := "none"
+
+	if len(netConf.StaticNodes) == 0 {
+		log.Printf("No static nodes specified, creating random nodes...")
+		netConf.StaticNodes = make(map[int]nodeconfig.NodeConfig)
+		newNodeRole = "random"
+	}
+
 	log.Printf("Creating %d nodes to satisfy N", netConf.N-len(netConf.StaticNodes))
 	// for k, v := range netConf.StaticNodes {
 	// 	log.Printf("node %d exists with values %v\n", k, v)
@@ -117,7 +127,7 @@ func main() {
 		}
 		netConf.StaticNodes[nodeName] = nodeconfig.NodeConfig{
 			NodeID:  nodeName,
-			Role:    "none",
+			Role:    newNodeRole,
 			MaxHops: netConf.MaxHops,
 		}
 	}
