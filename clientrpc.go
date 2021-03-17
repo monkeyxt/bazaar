@@ -115,7 +115,6 @@ func (bnode *BazaarNode) callLookupRPC(route []nodeconfig.Peer, lookupPeer nodec
 		log.Fatalln("lookup call error: ", err)
 	}
 
-	log.Printf("Lookup to %s finished\n", lookupPeer.Addr)
 	end := time.Now()
 	bnode.reportLatency(start, end)
 

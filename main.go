@@ -24,8 +24,12 @@ func main() {
 	// Load config location from commandline flag
 	var config string
 	var logFileLocation string
+
+	// output a lot
+	var verbose bool
 	flag.StringVar(&config, "config", defaultConfig, "The config used to define node behavior (default is bazaar.yml).")
 	flag.StringVar(&logFileLocation, "logfile", defaultLogFile, "The file which logs should be written to (default is log.txt).")
+	flag.BoolVar(&verbose, "verbose", false, "Add this flag if you want verbose logging output.")
 	flag.Parse()
 
 	// Create file to dump the node log
@@ -47,7 +51,11 @@ func main() {
 		log.Fatalf("Error creating node from config at %s: %s", defaultConfig, err)
 		return
 	}
-	log.Printf("Loaded config for bazaar node. Node ID: %d\n", node.config.NodeID)
+	if verbose {
+		log.Printf("Loaded config for bazaar node. Node ID: %d\n", node.config.NodeID)
+	}
+
+	node.VerboseLogging = verbose
 
 	// Finally, listen on rpc
 	log.Printf("Listening on port %d for incoming RPC connections...", node.config.NodePort)

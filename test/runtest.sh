@@ -18,13 +18,7 @@ mkdir -p $node_folder
 # Generate the .yml files in the directory using the config
 ./generatenodes --config $node_config
 
-# check if dir exists and cat everything if so
-if command -v bat &> /dev/null
-then
-    bat $node_folder/*.yml
-else
-    cat $node_folder/*.yml
-fi
+cat $node_folder/*.yml
 
 pids=()
 

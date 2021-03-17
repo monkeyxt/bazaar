@@ -26,6 +26,8 @@ type BazaarNode struct {
 	// communicating with that peer.
 	peerClients    map[int]*rpc.Client
 	peerClientLock *sync.Mutex
+
+	VerboseLogging bool
 }
 
 // BazaarServer exposes methods for letting a node listen for RPC
@@ -110,12 +112,7 @@ func CreateNodeFromConfigFile(configFile []byte) (*BazaarNode, error) {
 			node.config.SellerTarget = availableItems[randItemIdx]
 		}
 
-		// set the seller target to the randomly selected item
-		log.Printf("Node initialized with ID %d and seller target %s\n", node.config.NodeID, node.config.SellerTarget)
-
 	}
-
-	log.Printf("Here is the node config: %v\n", node.config)
 
 	// initialize the map for peer clients
 	node.peerClients = make(map[int]*rpc.Client)
@@ -167,14 +164,12 @@ func GenerateRandomItems() []string {
 
 	// generates from [1,len(possibleItems))
 	numItems := rand.Intn(len(possibleItems)) + 1
-	log.Printf("selecting %d items for buyer\n", numItems)
 	items := make([]string, numItems)
 
 	for idx := range items {
 		items[idx] = possibleItems[pickItems[idx]]
 	}
 
-	log.Printf("Returning %v for buyer\n", items)
 	return items
 }
 
@@ -221,7 +216,7 @@ type LookupResponse struct {
 
 // Lookup runs the lookup command.
 func (bnode *BazaarNode) Lookup(args LookupArgs, reply *LookupResponse) error {
-	log.Printf("Node %d is looking for %d with lookup for %s", bnode.config.NodeID, args.BuyerID, args.ProductName)
+	// log.Printf("Node %d is looking for %d with lookup for %s", bnode.config.NodeID, args.BuyerID, args.ProductName)
 	return bnode.lookupProduct(args.Route, args.ProductName, args.HopCount, args.BuyerID)
 }
 
@@ -234,17 +229,21 @@ func (bnode *BazaarNode) lookupProduct(route []nodeconfig.Peer, productName stri
 
 	// Reached a seller with the desired product. Send a reply.
 	if (bnode.config.Role == "seller" || bnode.config.Role == "both") && (bnode.config.SellerTarget == productName) {
-		log.Printf("Seller has found a buyer! Replying to %d along route %v\n", buyerID, route)
+		if bnode.VerboseLogging {
+			log.Printf("Seller has found a buyer! Replying to %d along route %v\n", buyerID, route)
+		}
 		go bnode.reply(route, nodeconfig.Peer{PeerID: bnode.config.NodeID, Addr: net.JoinHostPort(bnode.config.NodeIP, strconv.Itoa(bnode.config.NodePort))})
 	}
 
-	log.Printf("Node %d received lookup request from %d\n", bnode.config.NodeID, buyerID)
+	// log.Printf("Node %d received lookup request from %d\n", bnode.config.NodeID, buyerID)
 	if hopcount == 0 {
-		log.Printf("Node %d is discarding lookup request for %s\n", bnode.config.NodeID, productName)
+		if bnode.VerboseLogging {
+			log.Printf("Node %d is discarding lookup request for %s\n", bnode.config.NodeID, productName)
+		}
 		return nil
 	}
 
-	log.Printf("Node %d flooding peers with lookup requests for %s from %d...\n", bnode.config.NodeID, productName, buyerID)
+	// log.Printf("Node %d flooding peers with lookup requests for %s from %d...\n", bnode.config.NodeID, productName, buyerID)
 	for peer, addr := range bnode.config.Peers {
 
 		// Make sure that we are not flooding the node where we came from
@@ -260,23 +259,23 @@ func (bnode *BazaarNode) lookupProduct(route []nodeconfig.Peer, productName stri
 		}
 
 		// Flood the other peers
-		log.Printf("Node %d is flooding peer %d for lookup\n", bnode.config.NodeID, peer)
+		// log.Printf("Node %d is flooding peer %d for lookup\n", bnode.config.NodeID, peer)
 		go bnode.callLookupRPC(route, nodeconfig.Peer{PeerID: peer, Addr: addr}, productName, hopcount, buyerID)
 
 	}
 
-	log.Printf("Node %d is done flooding peers with lookups for %s from %d...\n", bnode.config.NodeID, productName, buyerID)
+	// log.Printf("Node %d is done flooding peers with lookups for %s from %d...\n", bnode.config.NodeID, productName, buyerID)
 
 	return nil
 }
 
 // Reply relays the message back to the buyer
 func (bnode *BazaarNode) Reply(args ReplyArgs, reply *ReplyResponse) error {
-	if len(args.RouteList) == 1 {
-		log.Printf("Message at final hop: node %v with message from seller node %d", args.RouteList[len(args.RouteList)-1], args.SellerInfo.PeerID)
-	} else {
-		log.Printf("Forward reply to node %v with message from seller node %d", args.RouteList[len(args.RouteList)-2], args.SellerInfo.PeerID)
-	}
+	// if len(args.RouteList) == 1 {
+	// 	log.Printf("Message at final hop: node %v with message from seller node %d", args.RouteList[len(args.RouteList)-1], args.SellerInfo.PeerID)
+	// } else {
+	// 	log.Printf("Forward reply to node %v with message from seller node %d", args.RouteList[len(args.RouteList)-2], args.SellerInfo.PeerID)
+	// }
 
 	return bnode.reply(args.RouteList, args.SellerInfo)
 }
@@ -304,17 +303,16 @@ func (bnode *BazaarNode) reply(routeList []nodeconfig.Peer, sellerInfo nodeconfi
 
 		// Reached original sender, add the sellerID to a list for the buyer to randomly
 		// choose from.
-		log.Printf("Node %d got a match reply from node %d ", bnode.config.NodeID, sellerInfo.PeerID)
+		// log.Printf("Node %d got a match reply from node %d ", bnode.config.NodeID, sellerInfo.PeerID)
 
 		bnode.sellerChannel <- nodeconfig.Peer{PeerID: sellerInfo.PeerID, Addr: sellerInfo.Addr}
-		log.Printf("Added node %d to seller channel", sellerInfo.PeerID)
 
 	} else {
 
 		var recipient nodeconfig.Peer
 		recipient, routeList = routeList[len(routeList)-2], routeList[:len(routeList)-1]
 
-		log.Printf("Sending reply RPC to %s\n", recipient.Addr)
+		// log.Printf("Sending reply RPC to %s\n", recipient.Addr)
 		go bnode.callReplyRPC(recipient, routeList, sellerInfo)
 
 	}
@@ -336,7 +334,7 @@ type TransactionResponse struct {
 // Buy item directly from the seller with RCP call
 func (bnode *BazaarNode) buy(seller nodeconfig.Peer) error {
 
-	log.Printf("Node %d buying from seller node %d", bnode.config.NodeID, seller.PeerID)
+	// log.Printf("Node %d buying from seller node %d", bnode.config.NodeID, seller.PeerID)
 	go bnode.callSellRPC(seller)
 
 	return nil
@@ -345,7 +343,9 @@ func (bnode *BazaarNode) buy(seller nodeconfig.Peer) error {
 
 // Sell runs the sell command
 func (bnode *BazaarNode) Sell(args TransactionArgs, reply *TransactionResponse) error {
-	log.Printf("Seller node %d selling item %s", bnode.config.NodeID, args.CurrentTarget)
+	if bnode.VerboseLogging {
+		log.Printf("Seller node %d selling item %s", bnode.config.NodeID, args.CurrentTarget)
+	}
 	return bnode.sell(args.CurrentTarget, args.BuyerID)
 }
 
@@ -373,7 +373,9 @@ func (bnode *BazaarNode) sell(target string, buyerID int) error {
 		if bnode.config.Items[targetID].Unlimited {
 
 			bnode.config.Items[targetID].Amount += 10
-			log.Printf("Seller node %d restocked %s", bnode.config.NodeID, bnode.config.Items[targetID].Item)
+			if bnode.VerboseLogging {
+				log.Printf("Seller node %d restocked %s", bnode.config.NodeID, bnode.config.Items[targetID].Item)
+			}
 
 			bnode.config.Items[targetID].Amount--
 			log.Printf("💰💰💰 Node %d sold %s to %d, amount remaining %d 💰💰💰", bnode.config.NodeID, bnode.config.Items[targetID].Item, buyerID, bnode.config.Items[targetID].Amount)
@@ -469,7 +471,10 @@ func (bnode *BazaarNode) buyerLoop() {
 		// Generate a buy request
 		if len(bnode.config.BuyerOptionList) != 0 {
 			bnode.config.BuyerTarget = bnode.config.BuyerOptionList[rand.Intn(len(bnode.config.BuyerOptionList))]
-			log.Printf("Node %d plans to buy %s", bnode.config.NodeID, bnode.config.BuyerTarget)
+			if bnode.VerboseLogging {
+				log.Printf("Node %d plans to buy %s", bnode.config.NodeID, bnode.config.BuyerTarget)
+			}
+
 		}
 
 		// Lookup request to neighbours
@@ -483,19 +488,42 @@ func (bnode *BazaarNode) buyerLoop() {
 
 		var rpcResponse LookupResponse
 		go bnode.Lookup(args, &rpcResponse)
-		log.Printf("Waiting to retrieve sellers...")
+		// log.Printf("Waiting to retrieve sellers...")
 
 		// Buy from the list of available sellers
 		time.Sleep(200 * time.Millisecond)
-		var sellerList []nodeconfig.Peer
+		var tempSellerList []nodeconfig.Peer
 		for i := 0; i < len(bnode.sellerChannel); i++ {
-			sellerList = append(sellerList, <-bnode.sellerChannel)
+			tempSellerList = append(tempSellerList, <-bnode.sellerChannel)
+		}
+
+		// dedupe seller list
+		var sellerList []nodeconfig.Peer
+		peerMap := make(map[int]nodeconfig.Peer)
+		for _, peer := range tempSellerList {
+			_, ok := peerMap[peer.PeerID]
+			if !ok {
+				peerMap[peer.PeerID] = peer
+				sellerList = append(sellerList, peer)
+			}
 		}
 
 		if len(sellerList) != 0 {
+			replyString := fmt.Sprintf("Node %d Received replies from ", bnode.config.NodeID)
+			for i, seller := range sellerList {
+				if i == 0 {
+					replyString += strconv.Itoa(seller.PeerID)
+				} else if i == len(sellerList)-1 {
+					replyString += ", and " + strconv.Itoa(seller.PeerID)
+				} else {
+					replyString += ", " + strconv.Itoa(seller.PeerID)
+				}
+			}
+			log.Println(replyString)
+
 			randomSeller := sellerList[rand.Intn(len(sellerList))]
 			go bnode.buy(randomSeller)
-			log.Printf("Node %d buys %s from seller node %d", bnode.config.NodeID, bnode.config.BuyerTarget, randomSeller.PeerID)
+			log.Printf("Node %d bought %s from seller node %d", bnode.config.NodeID, bnode.config.BuyerTarget, randomSeller.PeerID)
 		}
 
 	}
