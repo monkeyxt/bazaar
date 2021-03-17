@@ -537,7 +537,7 @@ func (bnode *BazaarNode) reportLatency(start time.Time, end time.Time) {
 	bnode.config.Latency += durationFloat64
 	bnode.config.RequestCount += 1
 
-	if bnode.config.RequestCount%50 == 0 {
+	if bnode.config.RequestCount%1000 == 0 {
 		averageLatency := bnode.config.Latency / float64(bnode.config.RequestCount)
 		log.Printf("[Performance] Average RPC Latency of peer %d： %f", bnode.config.NodeID, averageLatency)
 	}
