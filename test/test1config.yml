@@ -1,3 +1,5 @@
+# Assign one peer to be a buyer of fish and another to be a seller of fish. Ensure that all fish is sold and restocked forever.
+# Node 0 is an unlimited seller of fish and node 1 is a buyer of fish
 K: 1
 N: 2
 maxHops: 10

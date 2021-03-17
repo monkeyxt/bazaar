@@ -1,0 +1,20 @@
+# Assign two nodes to have no role. Ensure that attempts are made to buy or sell.
+K: 1
+N: 2
+maxHops: 1
+outputDir: test2nodes
+staticNodes:
+  0:
+    role: "none"
+    items:
+      - item: "boars"
+        amount: 10
+        unlimited: false
+  1:
+    role: "none"
+    items:
+      - item: "boars"
+        amount: 10
+        unlimited: false
+includeEdges:
+  - [0,1]

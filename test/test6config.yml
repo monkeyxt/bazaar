@@ -1,3 +1,5 @@
+# Simulate a race condition in buy() wherein a seller has stock of 1 for an item but then replies to multiple buyers.
+# Nodes 0 and 1 are buyers of salt, and node 2 is a seller. The seller has both buyers as peers.
 K: 2
 N: 3
 maxHops: 10

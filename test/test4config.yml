@@ -1,3 +1,5 @@
+# Randomly assign buyer and seller roles. Ensure that items keep being sold throughout.
+# Both node 0 and 1 are randomly assigned roles, and both will trade unlimited salt.
 K: 1
 N: 2
 maxHops: 10

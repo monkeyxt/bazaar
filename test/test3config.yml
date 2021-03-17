@@ -1,3 +1,5 @@
+# Assign one peer to be a buyer of fish and another to be a seller of boar. Ensure that nothing is sold.
+# Node 0 is a buyer of fish and node 1 is a seller of boars with 10 in stock.
 K: 1
 N: 2
 maxHops: 10

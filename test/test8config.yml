@@ -1,4 +1,4 @@
-# Stress test for larger networks with random nodes
+# Stress test for larger networks with random nodes, with 50 generated nodes.
 K: 7
 N: 50
 maxHops: 7

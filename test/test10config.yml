@@ -1,8 +1,11 @@
-# Stress test for larger networks with 5 buyers and 5 sellers for each item, and 20 additional generated nodes.
+# Stress test for many nodes with multiple items. 30 static nodes and 20 generated nodes
+# For each single good there are two buyers, an unlimited seller and a seller with 10 stock
+# For each pair of goods there are two buyers, an unlimited seller and a seller with 10 stock
+# For all three goods there are three buyers and three unlimited sellers
 K: 7
 N: 50
 maxHops: 7
-outputDir: test7nodes
+outputDir: test10nodes
 staticNodes:
   0:
     role: "buyer"
@@ -16,14 +19,18 @@ staticNodes:
     role: "buyer"
     buyeroptionlist:
       - "salt"
+      - "fish"
   3:
     role: "buyer"
     buyeroptionlist:
       - "salt"
+      - "fish"
   4:
     role: "buyer"
     buyeroptionlist:
       - "salt"
+      - "fish"
+      - "boars"
   5:
     role: "seller"
     items:
@@ -35,11 +42,14 @@ staticNodes:
     items:
       - item: "salt"
         amount: 10
-        unlimited: true
+        unlimited: false
   7:
     role: "seller"
     items:
       - item: "salt"
+        amount: 10
+        unlimited: true
+      - item: "fish"
         amount: 10
         unlimited: true
   8:
@@ -47,11 +57,20 @@ staticNodes:
     items:
       - item: "salt"
         amount: 10
-        unlimited: true
+        unlimited: false
+      - item: "fish"
+        amount: 10
+        unlimited: false
   9:
     role: "seller"
     items:
       - item: "salt"
+        amount: 10
+        unlimited: true
+      - item: "fish"
+        amount: 10
+        unlimited: true
+      - item: "boars"
         amount: 10
         unlimited: true
   10:
@@ -66,14 +85,18 @@ staticNodes:
     role: "buyer"
     buyeroptionlist:
       - "fish"
+      - "boars"
   13:
     role: "buyer"
     buyeroptionlist:
       - "fish"
+      - "boars"
   14:
     role: "buyer"
     buyeroptionlist:
       - "fish"
+      - "boars"
+      - "salt"
   15:
     role: "seller"
     items:
@@ -85,11 +108,14 @@ staticNodes:
     items:
       - item: "fish"
         amount: 10
-        unlimited: true
+        unlimited: false
   17:
     role: "seller"
     items:
       - item: "fish"
+        amount: 10
+        unlimited: true
+      - item: "boars"
         amount: 10
         unlimited: true
   18:
@@ -97,11 +123,20 @@ staticNodes:
     items:
       - item: "fish"
         amount: 10
-        unlimited: true
+        unlimited: false
+      - item: "boars"
+        amount: 10
+        unlimited: false
   19:
     role: "seller"
     items:
       - item: "fish"
+        amount: 10
+        unlimited: true
+      - item: "boars"
+        amount: 10
+        unlimited: true
+      - item: "salt"
         amount: 10
         unlimited: true
   20:
@@ -116,14 +151,18 @@ staticNodes:
     role: "buyer"
     buyeroptionlist:
       - "boars"
+      - "salt"
   23:
     role: "buyer"
     buyeroptionlist:
       - "boars"
+      - "salt"
   24:
     role: "buyer"
     buyeroptionlist:
       - "boars"
+      - "salt"
+      - "fish"
   25:
     role: "seller"
     items:
@@ -135,11 +174,14 @@ staticNodes:
     items:
       - item: "boars"
         amount: 10
-        unlimited: true
+        unlimited: false
   27:
     role: "seller"
     items:
       - item: "boars"
+        amount: 10
+        unlimited: true
+      - item: "salt"
         amount: 10
         unlimited: true
   28:
@@ -148,10 +190,18 @@ staticNodes:
       - item: "boars"
         amount: 10
         unlimited: true
+      - item: "salt"
+        amount: 10
+        unlimited: false
   29:
     role: "seller"
     items:
       - item: "boars"
         amount: 10
         unlimited: true
-    
+      - item: "salt"
+        amount: 10
+        unlimited: true
+      - item: "fish"
+        amount: 10
+        unlimited: true

@@ -1,3 +1,8 @@
+# One seller of boar, 3 buyers of boars, the remaining peers have no role. 
+# Fix the neighborhood structure so that buyers and sellers are 2-hop away in the peer-to-peer overlay network. 
+# Ensure that all items are sold and restocked and that all buyers can buy forever.
+# Node 0 is a seller of unlimited boars. Node 1 is neither a buyer nor seller. Nodes 2, 3, and 4 are buyers of boars.
+# Node 0's only peer is node 1. Node 1 has all nodes as peers. This means that the buyers and seller are 2 hops apart.
 K: 4
 N: 5
 maxHops: 2
