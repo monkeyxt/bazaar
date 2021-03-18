@@ -28,6 +28,7 @@ type BazaarNode struct {
 	peerClientLock *sync.Mutex
 
 	VerboseLogging bool
+	perfChannel    chan time.Time
 }
 
 // BazaarServer exposes methods for letting a node listen for RPC
@@ -121,6 +122,7 @@ func CreateNodeFromConfigFile(configFile []byte) (*BazaarNode, error) {
 
 	// initialize the seller channel, just have 100 max for now
 	node.sellerChannel = make(chan nodeconfig.Peer, 100)
+	node.perfChannel = make(chan time.Time)
 
 	return &node, nil
 }
@@ -305,6 +307,10 @@ func (bnode *BazaarNode) reply(routeList []nodeconfig.Peer, sellerInfo nodeconfi
 		// choose from.
 		// log.Printf("Node %d got a match reply from node %d ", bnode.config.NodeID, sellerInfo.PeerID)
 
+		// first seller
+		if len(bnode.perfChannel) == 0 {
+			bnode.perfChannel <- time.Now()
+		}
 		bnode.sellerChannel <- nodeconfig.Peer{PeerID: sellerInfo.PeerID, Addr: sellerInfo.Addr}
 
 	} else {
@@ -365,7 +371,7 @@ func (bnode *BazaarNode) sell(target string, buyerID int) error {
 	if bnode.config.Items[targetID].Amount > 0 {
 
 		bnode.config.Items[targetID].Amount--
-		log.Printf("💰💰💰 Node %d sold %s to %d, amount remaining %d 💰💰💰", bnode.config.NodeID, bnode.config.Items[targetID].Item, buyerID, bnode.config.Items[targetID].Amount)
+		log.Printf("💰💰💰 Node %d sold %s to %d, amount remaining %d 💰💰💰", bnode.config.NodeID, target, buyerID, bnode.config.Items[targetID].Amount)
 
 	} else {
 
@@ -378,7 +384,7 @@ func (bnode *BazaarNode) sell(target string, buyerID int) error {
 			}
 
 			bnode.config.Items[targetID].Amount--
-			log.Printf("💰💰💰 Node %d sold %s to %d, amount remaining %d 💰💰💰", bnode.config.NodeID, bnode.config.Items[targetID].Item, buyerID, bnode.config.Items[targetID].Amount)
+			log.Printf("💰💰💰 Node %d sold %s to %d, amount remaining %d 💰💰💰", bnode.config.NodeID, target, buyerID, bnode.config.Items[targetID].Amount)
 
 		} else {
 
@@ -487,11 +493,20 @@ func (bnode *BazaarNode) buyerLoop() {
 		}
 
 		var rpcResponse LookupResponse
+		startTime := time.Now()
 		go bnode.Lookup(args, &rpcResponse)
 		// log.Printf("Waiting to retrieve sellers...")
 
 		// Buy from the list of available sellers
 		time.Sleep(200 * time.Millisecond)
+
+		// NOTE: we are assuming here that this is the corresponding reply for
+		// the previously issued lookup request
+		endTime := <-bnode.perfChannel
+		for len(bnode.perfChannel) > 0 {
+			<-bnode.perfChannel
+		}
+		bnode.reportLatency(startTime, endTime)
 		var tempSellerList []nodeconfig.Peer
 		for i := 0; i < len(bnode.sellerChannel); i++ {
 			tempSellerList = append(tempSellerList, <-bnode.sellerChannel)
@@ -537,7 +552,7 @@ func (bnode *BazaarNode) reportLatency(start time.Time, end time.Time) {
 	bnode.config.Latency += durationFloat64
 	bnode.config.RequestCount += 1
 
-	if bnode.config.RequestCount%5000 == 0 {
+	if bnode.config.RequestCount%50 == 0 {
 		averageLatency := bnode.config.Latency / float64(bnode.config.RequestCount)
 		log.Printf("[Performance] Average RPC Latency of peer %d： %f", bnode.config.NodeID, averageLatency)
 	}

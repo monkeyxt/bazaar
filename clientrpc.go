@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/rpc"
 	"sync"
-	"time"
 
 	"github.com/rjected/bazaar/nodeconfig"
 )
@@ -46,7 +45,7 @@ func (bnode *BazaarNode) getClientForPeer(peer nodeconfig.Peer) (*rpc.Client, er
 // callReplyRPC calls the reply RPC with the given routelist to the given peer
 func (bnode *BazaarNode) callReplyRPC(replyPeer nodeconfig.Peer, routeList []nodeconfig.Peer, sellerInfo nodeconfig.Peer) {
 
-	startTime := time.Now()
+	// startTime := time.Now()
 
 	// get client
 	client, err := bnode.getClientForPeer(replyPeer)
@@ -61,15 +60,15 @@ func (bnode *BazaarNode) callReplyRPC(replyPeer nodeconfig.Peer, routeList []nod
 	if err != nil {
 		log.Fatalln("reply error: ", err)
 	}
-	end := time.Now()
-	bnode.reportLatency(startTime, end)
+	// end := time.Now()
+	// bnode.reportLatency(startTime, end)
 
 }
 
 // callSellRPC calls the sell RPC to the given node, and reports latency.
 func (bnode *BazaarNode) callSellRPC(seller nodeconfig.Peer) {
 
-	start := time.Now()
+	// start := time.Now()
 
 	// get client
 	client, err := bnode.getClientForPeer(seller)
@@ -85,8 +84,8 @@ func (bnode *BazaarNode) callSellRPC(seller nodeconfig.Peer) {
 		log.Fatalln("sell call error: ", err)
 	}
 
-	end := time.Now()
-	bnode.reportLatency(start, end)
+	// end := time.Now()
+	// bnode.reportLatency(start, end)
 
 }
 
@@ -94,7 +93,7 @@ func (bnode *BazaarNode) callSellRPC(seller nodeconfig.Peer) {
 // given peer. It will also take care of reporting latency.
 func (bnode *BazaarNode) callLookupRPC(route []nodeconfig.Peer, lookupPeer nodeconfig.Peer, productName string, hopcount, buyerID int) {
 
-	start := time.Now()
+	// start := time.Now()
 
 	// get client
 	client, err := bnode.getClientForPeer(lookupPeer)
@@ -115,7 +114,7 @@ func (bnode *BazaarNode) callLookupRPC(route []nodeconfig.Peer, lookupPeer nodec
 		log.Fatalln("lookup call error: ", err)
 	}
 
-	end := time.Now()
-	bnode.reportLatency(start, end)
+	// end := time.Now()
+	// bnode.reportLatency(start, end)
 
 }
