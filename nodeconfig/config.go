@@ -1,7 +1,9 @@
 // Package nodeconfig contains the configuration structures for bazaar nodes.
 package nodeconfig
 
-import "sync"
+import (
+	"sync"
+)
 
 // NodeConfig includes a list of peers, node role, a list of items (with
 // amounts), and a maximum number of peers to connect to.

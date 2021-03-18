@@ -1,0 +1,47 @@
+K: 4
+N: 6
+maxHops: 5
+outputDir: perf1nodes
+staticNodes:
+  0:
+    role: "seller"
+    items:
+      - item: "salt"
+        amount: 10
+        unlimited: false
+  1:
+    role: "buyer"
+    buyeroptionlist:
+      - "salt"
+  2:
+    role: "none"
+  3:
+    role: "buyer"
+    buyeroptionlist:
+      - "salt"
+  4:
+    role: "none"
+  5:
+    role: "seller"
+    items:
+      - item: "salt"
+        amount: 10
+        unlimited: true
+
+includeEdges:
+  - [0,1]
+  - [0,5]
+  - [1,2]
+  - [1,4]
+  - [2,3]
+  - [2,4]
+  - [3,4]
+  - [4,5]
+excludeEdges:
+  - [0,2]
+  - [0,3]
+  - [0,4]
+  - [1,3]
+  - [1,5]
+  - [2,5]
+  - [3,5]

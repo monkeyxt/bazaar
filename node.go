@@ -30,6 +30,8 @@ type BazaarNode struct {
 
 	VerboseLogging bool
 	perfChannel    chan time.Time
+
+	PerfLogger *log.Logger
 }
 
 // BazaarServer exposes methods for letting a node listen for RPC
@@ -558,7 +560,7 @@ func (bnode *BazaarNode) reportRPCLatency(start time.Time, end time.Time, peer s
 		bnode.config.LatencyLocal += durationFloat64
 		bnode.config.RequestCountLocal += 1
 
-		if bnode.config.RequestCountLocal%50 == 0 {
+		if bnode.config.RequestCountLocal%500 == 0 {
 			averageLatency := bnode.config.LatencyLocal / float64(bnode.config.RequestCountLocal)
 			log.Printf("👽👽👽 Average Local RPC Latency of peer %d： %f 👽👽👽", bnode.config.NodeID, averageLatency)
 		}
@@ -569,7 +571,7 @@ func (bnode *BazaarNode) reportRPCLatency(start time.Time, end time.Time, peer s
 		bnode.config.LatencyRemote += durationFloat64
 		bnode.config.RequestCountRemote += 1
 
-		if bnode.config.RequestCountRemote%50 == 0 {
+		if bnode.config.RequestCountRemote%500 == 0 {
 			averageLatency := bnode.config.LatencyRemote / float64(bnode.config.RequestCountRemote)
 			log.Printf("👽👽👽 Average Remote RPC Latency of peer %d： %f 👽👽👽", bnode.config.NodeID, averageLatency)
 		}
@@ -585,9 +587,7 @@ func (bnode *BazaarNode) reportLookupLatency(start time.Time, end time.Time) {
 	bnode.config.LatencyLookup += durationFloat64
 	bnode.config.RequestCountLookup += 1
 
-	if bnode.config.RequestCountLookup%50 == 0 {
-		averageLatency := bnode.config.LatencyLookup / float64(bnode.config.RequestCountLookup)
-		log.Printf("👽👽👽 Average Lookup Latency of peer %d： %f 👽👽👽", bnode.config.NodeID, averageLatency)
-	}
+	averageLatency := bnode.config.LatencyLookup / float64(bnode.config.RequestCountLookup)
+	bnode.PerfLogger.Printf("%f", averageLatency)
 
 }
