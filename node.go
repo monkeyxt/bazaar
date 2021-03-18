@@ -32,6 +32,11 @@ type BazaarNode struct {
 	perfChannel    chan time.Time
 
 	PerfLogger *log.Logger
+	lookupUUID int
+	uuidLock   *sync.Mutex
+
+	perfMap  map[int][]time.Time
+	perfLock *sync.Mutex
 }
 
 // BazaarServer exposes methods for letting a node listen for RPC
@@ -53,6 +58,43 @@ func SeedMathRand() error {
 	rand.Seed(int64(seed))
 
 	return nil
+}
+
+// AddLookupTime given the uuid, adds the current time to the perf map.
+func (bnode *BazaarNode) AddLookupTime(uuid int) {
+	end := time.Now()
+	bnode.perfLock.Lock()
+	_, ok := bnode.perfMap[uuid]
+	if !ok {
+		bnode.perfMap[uuid] = []time.Time{}
+	}
+	timeList := bnode.perfMap[uuid]
+	timeList = append(timeList, end)
+	bnode.perfMap[uuid] = timeList
+
+	bnode.perfLock.Unlock()
+}
+
+// GetEarliestLookup gets the earliest time for the given uuid
+func (bnode *BazaarNode) GetEarliestLookup(uuid int) (time.Time, error) {
+	var earliest time.Time
+	bnode.perfLock.Lock()
+	defer bnode.perfLock.Unlock()
+	if len(bnode.perfMap[uuid]) == 0 {
+		return time.Time{}, fmt.Errorf("error getting the earliest time, no replies have been received")
+	}
+	earliest = bnode.perfMap[uuid][0]
+	return earliest, nil
+}
+
+// GetLookupUUID generates a lookup uuid. This is thread safe.
+func (bnode *BazaarNode) GetLookupUUID() int {
+	var uuid int
+	bnode.uuidLock.Lock()
+	uuid = bnode.lookupUUID
+	bnode.lookupUUID++
+	bnode.uuidLock.Unlock()
+	return uuid
 }
 
 // CreateNodeFromConfigFile loads initial node state from a config file passed as
@@ -122,6 +164,9 @@ func CreateNodeFromConfigFile(configFile []byte) (*BazaarNode, error) {
 	node.peerClients = make(map[int]*rpc.Client)
 	node.peerClientLock = &sync.Mutex{}
 	node.config.Mu = &sync.Mutex{}
+	node.uuidLock = &sync.Mutex{}
+	node.perfMap = make(map[int][]time.Time)
+	node.perfLock = &sync.Mutex{}
 
 	// initialize the seller channel, just have 100 max for now
 	node.sellerChannel = make(chan nodeconfig.Peer, 100)
@@ -213,6 +258,7 @@ type LookupArgs struct {
 	HopCount    int
 	BuyerID     int
 	Route       []nodeconfig.Peer
+	UUID        int
 }
 
 // LookupResponse is empty because no response is required for lookup.
@@ -222,11 +268,11 @@ type LookupResponse struct {
 // Lookup runs the lookup command.
 func (bnode *BazaarNode) Lookup(args LookupArgs, reply *LookupResponse) error {
 	// log.Printf("Node %d is looking for %d with lookup for %s", bnode.config.NodeID, args.BuyerID, args.ProductName)
-	return bnode.lookupProduct(args.Route, args.ProductName, args.HopCount, args.BuyerID)
+	return bnode.lookupProduct(args.Route, args.ProductName, args.HopCount, args.BuyerID, args.UUID)
 }
 
 // lookupProduct takes in a product name and hopcount, and runs the lookup procedure.
-func (bnode *BazaarNode) lookupProduct(route []nodeconfig.Peer, productName string, hopcount int, buyerID int) error {
+func (bnode *BazaarNode) lookupProduct(route []nodeconfig.Peer, productName string, hopcount int, buyerID int, uuid int) error {
 
 	// Add the current node to the routelist
 	portStr := net.JoinHostPort(bnode.config.NodeIP, strconv.Itoa(bnode.config.NodePort))
@@ -237,7 +283,7 @@ func (bnode *BazaarNode) lookupProduct(route []nodeconfig.Peer, productName stri
 		if bnode.VerboseLogging {
 			log.Printf("Seller has found a buyer! Replying to %d along route %v\n", buyerID, route)
 		}
-		go bnode.reply(route, nodeconfig.Peer{PeerID: bnode.config.NodeID, Addr: net.JoinHostPort(bnode.config.NodeIP, strconv.Itoa(bnode.config.NodePort))})
+		go bnode.reply(route, nodeconfig.Peer{PeerID: bnode.config.NodeID, Addr: net.JoinHostPort(bnode.config.NodeIP, strconv.Itoa(bnode.config.NodePort))}, uuid)
 	}
 
 	// log.Printf("Node %d received lookup request from %d\n", bnode.config.NodeID, buyerID)
@@ -265,7 +311,7 @@ func (bnode *BazaarNode) lookupProduct(route []nodeconfig.Peer, productName stri
 
 		// Flood the other peers
 		// log.Printf("Node %d is flooding peer %d for lookup\n", bnode.config.NodeID, peer)
-		go bnode.callLookupRPC(route, nodeconfig.Peer{PeerID: peer, Addr: addr}, productName, hopcount, buyerID)
+		go bnode.callLookupRPC(route, nodeconfig.Peer{PeerID: peer, Addr: addr}, productName, hopcount, buyerID, uuid)
 
 	}
 
@@ -282,7 +328,7 @@ func (bnode *BazaarNode) Reply(args ReplyArgs, reply *ReplyResponse) error {
 	// 	log.Printf("Forward reply to node %v with message from seller node %d", args.RouteList[len(args.RouteList)-2], args.SellerInfo.PeerID)
 	// }
 
-	return bnode.reply(args.RouteList, args.SellerInfo)
+	return bnode.reply(args.RouteList, args.SellerInfo, args.LookupUUID)
 }
 
 // ReplyArgs contains the RPC arguments for reply, which is the backtracking list
@@ -290,6 +336,7 @@ func (bnode *BazaarNode) Reply(args ReplyArgs, reply *ReplyResponse) error {
 type ReplyArgs struct {
 	RouteList  []nodeconfig.Peer
 	SellerInfo nodeconfig.Peer
+	LookupUUID int
 }
 
 // ReplyResponse is empty because no response is required.
@@ -297,7 +344,7 @@ type ReplyResponse struct {
 }
 
 // Reply message with the peerId of the seller
-func (bnode *BazaarNode) reply(routeList []nodeconfig.Peer, sellerInfo nodeconfig.Peer) error {
+func (bnode *BazaarNode) reply(routeList []nodeconfig.Peer, sellerInfo nodeconfig.Peer, lookupUUID int) error {
 
 	// routeList: a list of ids to traverse back to the original sender in the format of
 	//         [1, 5, 2, 6], so the reverse traversal path should be 6 --> 2 --> 5 --> 1
@@ -322,7 +369,7 @@ func (bnode *BazaarNode) reply(routeList []nodeconfig.Peer, sellerInfo nodeconfi
 		recipient, routeList = routeList[len(routeList)-2], routeList[:len(routeList)-1]
 
 		// log.Printf("Sending reply RPC to %s\n", recipient.Addr)
-		go bnode.callReplyRPC(recipient, routeList, sellerInfo)
+		go bnode.callReplyRPC(recipient, routeList, sellerInfo, lookupUUID)
 
 	}
 
@@ -488,11 +535,13 @@ func (bnode *BazaarNode) buyerLoop() {
 
 		// Lookup request to neighbours
 		// portStr := net.JoinHostPort(bnode.config.NodeIP, strconv.Itoa(bnode.config.NodePort))
+		lookupUUID := bnode.GetLookupUUID()
 		args := LookupArgs{
 			ProductName: bnode.config.BuyerTarget,
 			HopCount:    bnode.config.MaxHops,
 			BuyerID:     bnode.config.NodeID,
 			Route:       []nodeconfig.Peer{},
+			UUID:        lookupUUID,
 		}
 
 		var rpcResponse LookupResponse
@@ -505,11 +554,12 @@ func (bnode *BazaarNode) buyerLoop() {
 
 		// NOTE: we are assuming here that this is the corresponding reply for
 		// the previously issued lookup request
-		endTime := <-bnode.perfChannel
-		for len(bnode.perfChannel) > 0 {
-			<-bnode.perfChannel
+		endTime, err := bnode.GetEarliestLookup(lookupUUID)
+		if err == nil {
+			bnode.reportLookupLatency(startTime, endTime)
+		} else {
+			// log.Println("Not reporting latency, no data")
 		}
-		bnode.reportLookupLatency(startTime, endTime)
 
 		var tempSellerList []nodeconfig.Peer
 		for i := 0; i < len(bnode.sellerChannel); i++ {

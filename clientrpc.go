@@ -44,7 +44,7 @@ func (bnode *BazaarNode) getClientForPeer(peer nodeconfig.Peer) (*rpc.Client, er
 }
 
 // callReplyRPC calls the reply RPC with the given routelist to the given peer
-func (bnode *BazaarNode) callReplyRPC(replyPeer nodeconfig.Peer, routeList []nodeconfig.Peer, sellerInfo nodeconfig.Peer) {
+func (bnode *BazaarNode) callReplyRPC(replyPeer nodeconfig.Peer, routeList []nodeconfig.Peer, sellerInfo nodeconfig.Peer, lookupUUID int) {
 
 	startTime := time.Now()
 
@@ -54,7 +54,7 @@ func (bnode *BazaarNode) callReplyRPC(replyPeer nodeconfig.Peer, routeList []nod
 		log.Fatalf("Error getting client during sell call: %s\n", err)
 	}
 
-	req := ReplyArgs{routeList, sellerInfo}
+	req := ReplyArgs{routeList, sellerInfo, lookupUUID}
 	var res ReplyResponse
 
 	err = client.Call("node.Reply", req, &res)
@@ -92,7 +92,7 @@ func (bnode *BazaarNode) callSellRPC(seller nodeconfig.Peer) {
 
 // callLookupRPC is meant to be run in a goroutine and call the lookup RPC to the
 // given peer. It will also take care of reporting latency.
-func (bnode *BazaarNode) callLookupRPC(route []nodeconfig.Peer, lookupPeer nodeconfig.Peer, productName string, hopcount, buyerID int) {
+func (bnode *BazaarNode) callLookupRPC(route []nodeconfig.Peer, lookupPeer nodeconfig.Peer, productName string, hopcount, buyerID int, uuid int) {
 
 	start := time.Now()
 
@@ -107,6 +107,7 @@ func (bnode *BazaarNode) callLookupRPC(route []nodeconfig.Peer, lookupPeer nodec
 		HopCount:    hopcount - 1,
 		BuyerID:     buyerID,
 		Route:       route,
+		UUID:        uuid,
 	}
 	var res LookupResponse
 
