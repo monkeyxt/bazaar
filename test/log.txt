@@ -1,0 +1,378 @@
+2021/03/17 21:31:29 Listening on port 10001 for incoming RPC connections...
+2021/03/17 21:31:29 Listening on port 10000 for incoming RPC connections...
+2021/03/17 21:31:29 Node 1 listening for rpc on address :10001
+2021/03/17 21:31:29 Node 0 listening for rpc on address :10000
+2021/03/17 21:31:35 Node 1 Received replies from 0
+2021/03/17 21:31:35 Node 1 bought fish from seller node 0
+2021/03/17 21:31:35 💰💰💰 Node 0 sold fish to 1, amount remaining 9 💰💰💰
+2021/03/17 21:31:35 Node 1 Received replies from 0
+2021/03/17 21:31:35 Node 1 bought fish from seller node 0
+2021/03/17 21:31:35 💰💰💰 Node 0 sold fish to 1, amount remaining 8 💰💰💰
+2021/03/17 21:31:35 Node 1 Received replies from 0
+2021/03/17 21:31:35 Node 1 bought fish from seller node 0
+2021/03/17 21:31:35 💰💰💰 Node 0 sold fish to 1, amount remaining 7 💰💰💰
+2021/03/17 21:31:35 Node 1 Received replies from 0
+2021/03/17 21:31:35 Node 1 bought fish from seller node 0
+2021/03/17 21:31:35 💰💰💰 Node 0 sold fish to 1, amount remaining 6 💰💰💰
+2021/03/17 21:31:36 Node 1 Received replies from 0
+2021/03/17 21:31:36 Node 1 bought fish from seller node 0
+2021/03/17 21:31:36 💰💰💰 Node 0 sold fish to 1, amount remaining 5 💰💰💰
+2021/03/17 21:31:36 Node 1 Received replies from 0
+2021/03/17 21:31:36 Node 1 bought fish from seller node 0
+2021/03/17 21:31:36 💰💰💰 Node 0 sold fish to 1, amount remaining 4 💰💰💰
+2021/03/17 21:31:36 Node 1 Received replies from 0
+2021/03/17 21:31:36 Node 1 bought fish from seller node 0
+2021/03/17 21:31:36 💰💰💰 Node 0 sold fish to 1, amount remaining 3 💰💰💰
+2021/03/17 21:31:36 Node 1 Received replies from 0
+2021/03/17 21:31:36 Node 1 bought fish from seller node 0
+2021/03/17 21:31:36 💰💰💰 Node 0 sold fish to 1, amount remaining 2 💰💰💰
+2021/03/17 21:31:36 Node 1 Received replies from 0
+2021/03/17 21:31:36 Node 1 bought fish from seller node 0
+2021/03/17 21:31:36 💰💰💰 Node 0 sold fish to 1, amount remaining 1 💰💰💰
+2021/03/17 21:31:37 Node 1 Received replies from 0
+2021/03/17 21:31:37 Node 1 bought fish from seller node 0
+2021/03/17 21:31:37 💰💰💰 Node 0 sold fish to 1, amount remaining 0 💰💰💰
+2021/03/17 21:31:37 Node 1 Received replies from 0
+2021/03/17 21:31:37 Node 1 bought fish from seller node 0
+2021/03/17 21:31:37 💰💰💰 Node 0 sold fish to 1, amount remaining 9 💰💰💰
+2021/03/17 21:31:37 Node 1 Received replies from 0
+2021/03/17 21:31:37 Node 1 bought fish from seller node 0
+2021/03/17 21:31:37 💰💰💰 Node 0 sold fish to 1, amount remaining 8 💰💰💰
+2021/03/17 21:31:37 Node 1 Received replies from 0
+2021/03/17 21:31:37 Node 1 bought fish from seller node 0
+2021/03/17 21:31:37 💰💰💰 Node 0 sold fish to 1, amount remaining 7 💰💰💰
+2021/03/17 21:31:37 Node 1 Received replies from 0
+2021/03/17 21:31:37 Node 1 bought fish from seller node 0
+2021/03/17 21:31:37 💰💰💰 Node 0 sold fish to 1, amount remaining 6 💰💰💰
+2021/03/17 21:31:38 Node 1 Received replies from 0
+2021/03/17 21:31:38 Node 1 bought fish from seller node 0
+2021/03/17 21:31:38 💰💰💰 Node 0 sold fish to 1, amount remaining 5 💰💰💰
+2021/03/17 21:31:38 Node 1 Received replies from 0
+2021/03/17 21:31:38 Node 1 bought fish from seller node 0
+2021/03/17 21:31:38 💰💰💰 Node 0 sold fish to 1, amount remaining 4 💰💰💰
+2021/03/17 21:31:38 Node 1 Received replies from 0
+2021/03/17 21:31:38 Node 1 bought fish from seller node 0
+2021/03/17 21:31:38 💰💰💰 Node 0 sold fish to 1, amount remaining 3 💰💰💰
+2021/03/17 21:31:38 Node 1 Received replies from 0
+2021/03/17 21:31:38 Node 1 bought fish from seller node 0
+2021/03/17 21:31:38 💰💰💰 Node 0 sold fish to 1, amount remaining 2 💰💰💰
+2021/03/17 21:31:38 Node 1 Received replies from 0
+2021/03/17 21:31:38 Node 1 bought fish from seller node 0
+2021/03/17 21:31:38 💰💰💰 Node 0 sold fish to 1, amount remaining 1 💰💰💰
+2021/03/17 21:31:39 Node 1 Received replies from 0
+2021/03/17 21:31:39 Node 1 bought fish from seller node 0
+2021/03/17 21:31:39 💰💰💰 Node 0 sold fish to 1, amount remaining 0 💰💰💰
+2021/03/17 21:31:39 Node 1 Received replies from 0
+2021/03/17 21:31:39 Node 1 bought fish from seller node 0
+2021/03/17 21:31:39 💰💰💰 Node 0 sold fish to 1, amount remaining 9 💰💰💰
+2021/03/17 21:31:39 Node 1 Received replies from 0
+2021/03/17 21:31:39 Node 1 bought fish from seller node 0
+2021/03/17 21:31:39 💰💰💰 Node 0 sold fish to 1, amount remaining 8 💰💰💰
+2021/03/17 21:31:39 Node 1 Received replies from 0
+2021/03/17 21:31:39 Node 1 bought fish from seller node 0
+2021/03/17 21:31:39 💰💰💰 Node 0 sold fish to 1, amount remaining 7 💰💰💰
+2021/03/17 21:31:39 Node 1 Received replies from 0
+2021/03/17 21:31:39 Node 1 bought fish from seller node 0
+2021/03/17 21:31:39 💰💰💰 Node 0 sold fish to 1, amount remaining 6 💰💰💰
+2021/03/17 21:31:39 👽👽👽 Average Local RPC Latency of peer 1： 0.000377 👽👽👽
+2021/03/17 21:31:40 Node 1 Received replies from 0
+2021/03/17 21:31:40 Node 1 bought fish from seller node 0
+2021/03/17 21:31:40 💰💰💰 Node 0 sold fish to 1, amount remaining 5 💰💰💰
+2021/03/17 21:31:40 Node 1 Received replies from 0
+2021/03/17 21:31:40 Node 1 bought fish from seller node 0
+2021/03/17 21:31:40 💰💰💰 Node 0 sold fish to 1, amount remaining 4 💰💰💰
+2021/03/17 21:31:40 Node 1 Received replies from 0
+2021/03/17 21:31:40 Node 1 bought fish from seller node 0
+2021/03/17 21:31:40 💰💰💰 Node 0 sold fish to 1, amount remaining 3 💰💰💰
+2021/03/17 21:31:40 Node 1 Received replies from 0
+2021/03/17 21:31:40 Node 1 bought fish from seller node 0
+2021/03/17 21:31:40 💰💰💰 Node 0 sold fish to 1, amount remaining 2 💰💰💰
+2021/03/17 21:31:40 Node 1 Received replies from 0
+2021/03/17 21:31:40 Node 1 bought fish from seller node 0
+2021/03/17 21:31:40 💰💰💰 Node 0 sold fish to 1, amount remaining 1 💰💰💰
+2021/03/17 21:31:41 Node 1 Received replies from 0
+2021/03/17 21:31:41 Node 1 bought fish from seller node 0
+2021/03/17 21:31:41 💰💰💰 Node 0 sold fish to 1, amount remaining 0 💰💰💰
+2021/03/17 21:31:41 Node 1 Received replies from 0
+2021/03/17 21:31:41 Node 1 bought fish from seller node 0
+2021/03/17 21:31:41 💰💰💰 Node 0 sold fish to 1, amount remaining 9 💰💰💰
+2021/03/17 21:31:41 Node 1 Received replies from 0
+2021/03/17 21:31:41 Node 1 bought fish from seller node 0
+2021/03/17 21:31:41 💰💰💰 Node 0 sold fish to 1, amount remaining 8 💰💰💰
+2021/03/17 21:31:41 Node 1 Received replies from 0
+2021/03/17 21:31:41 Node 1 bought fish from seller node 0
+2021/03/17 21:31:41 💰💰💰 Node 0 sold fish to 1, amount remaining 7 💰💰💰
+2021/03/17 21:31:41 Node 1 Received replies from 0
+2021/03/17 21:31:41 Node 1 bought fish from seller node 0
+2021/03/17 21:31:41 💰💰💰 Node 0 sold fish to 1, amount remaining 6 💰💰💰
+2021/03/17 21:31:42 Node 1 Received replies from 0
+2021/03/17 21:31:42 Node 1 bought fish from seller node 0
+2021/03/17 21:31:42 💰💰💰 Node 0 sold fish to 1, amount remaining 5 💰💰💰
+2021/03/17 21:31:42 Node 1 Received replies from 0
+2021/03/17 21:31:42 Node 1 bought fish from seller node 0
+2021/03/17 21:31:42 💰💰💰 Node 0 sold fish to 1, amount remaining 4 💰💰💰
+2021/03/17 21:31:42 Node 1 Received replies from 0
+2021/03/17 21:31:42 Node 1 bought fish from seller node 0
+2021/03/17 21:31:42 💰💰💰 Node 0 sold fish to 1, amount remaining 3 💰💰💰
+2021/03/17 21:31:42 Node 1 Received replies from 0
+2021/03/17 21:31:42 Node 1 bought fish from seller node 0
+2021/03/17 21:31:42 💰💰💰 Node 0 sold fish to 1, amount remaining 2 💰💰💰
+2021/03/17 21:31:42 Node 1 Received replies from 0
+2021/03/17 21:31:42 Node 1 bought fish from seller node 0
+2021/03/17 21:31:42 💰💰💰 Node 0 sold fish to 1, amount remaining 1 💰💰💰
+2021/03/17 21:31:43 Node 1 Received replies from 0
+2021/03/17 21:31:43 Node 1 bought fish from seller node 0
+2021/03/17 21:31:43 💰💰💰 Node 0 sold fish to 1, amount remaining 0 💰💰💰
+2021/03/17 21:31:43 Node 1 Received replies from 0
+2021/03/17 21:31:43 Node 1 bought fish from seller node 0
+2021/03/17 21:31:43 💰💰💰 Node 0 sold fish to 1, amount remaining 9 💰💰💰
+2021/03/17 21:31:43 Node 1 Received replies from 0
+2021/03/17 21:31:43 Node 1 bought fish from seller node 0
+2021/03/17 21:31:43 💰💰💰 Node 0 sold fish to 1, amount remaining 8 💰💰💰
+2021/03/17 21:31:43 Node 1 Received replies from 0
+2021/03/17 21:31:43 Node 1 bought fish from seller node 0
+2021/03/17 21:31:43 💰💰💰 Node 0 sold fish to 1, amount remaining 7 💰💰💰
+2021/03/17 21:31:43 Node 1 Received replies from 0
+2021/03/17 21:31:43 Node 1 bought fish from seller node 0
+2021/03/17 21:31:43 💰💰💰 Node 0 sold fish to 1, amount remaining 6 💰💰💰
+2021/03/17 21:31:44 Node 1 Received replies from 0
+2021/03/17 21:31:44 Node 1 bought fish from seller node 0
+2021/03/17 21:31:44 💰💰💰 Node 0 sold fish to 1, amount remaining 5 💰💰💰
+2021/03/17 21:31:44 Node 1 Received replies from 0
+2021/03/17 21:31:44 Node 1 bought fish from seller node 0
+2021/03/17 21:31:44 💰💰💰 Node 0 sold fish to 1, amount remaining 4 💰💰💰
+2021/03/17 21:31:44 Node 1 Received replies from 0
+2021/03/17 21:31:44 Node 1 bought fish from seller node 0
+2021/03/17 21:31:44 💰💰💰 Node 0 sold fish to 1, amount remaining 3 💰💰💰
+2021/03/17 21:31:44 Node 1 Received replies from 0
+2021/03/17 21:31:44 Node 1 bought fish from seller node 0
+2021/03/17 21:31:44 💰💰💰 Node 0 sold fish to 1, amount remaining 2 💰💰💰
+2021/03/17 21:31:45 👽👽👽 Average Lookup Latency of peer 1： 0.000423 👽👽👽
+2021/03/17 21:31:45 Node 1 Received replies from 0
+2021/03/17 21:31:45 Node 1 bought fish from seller node 0
+2021/03/17 21:31:45 👽👽👽 Average Local RPC Latency of peer 0： 0.200840 👽👽👽
+2021/03/17 21:31:45 💰💰💰 Node 0 sold fish to 1, amount remaining 1 💰💰💰
+2021/03/17 21:31:45 👽👽👽 Average Local RPC Latency of peer 1： 0.000400 👽👽👽
+2021/03/17 21:31:45 Node 1 Received replies from 0
+2021/03/17 21:31:45 Node 1 bought fish from seller node 0
+2021/03/17 21:31:45 💰💰💰 Node 0 sold fish to 1, amount remaining 0 💰💰💰
+2021/03/17 21:31:45 Node 1 Received replies from 0
+2021/03/17 21:31:45 Node 1 bought fish from seller node 0
+2021/03/17 21:31:45 💰💰💰 Node 0 sold fish to 1, amount remaining 9 💰💰💰
+2021/03/17 21:31:45 Node 1 Received replies from 0
+2021/03/17 21:31:45 Node 1 bought fish from seller node 0
+2021/03/17 21:31:45 💰💰💰 Node 0 sold fish to 1, amount remaining 8 💰💰💰
+2021/03/17 21:31:45 Node 1 Received replies from 0
+2021/03/17 21:31:45 Node 1 bought fish from seller node 0
+2021/03/17 21:31:45 💰💰💰 Node 0 sold fish to 1, amount remaining 7 💰💰💰
+2021/03/17 21:31:46 Node 1 Received replies from 0
+2021/03/17 21:31:46 Node 1 bought fish from seller node 0
+2021/03/17 21:31:46 💰💰💰 Node 0 sold fish to 1, amount remaining 6 💰💰💰
+2021/03/17 21:31:46 Node 1 Received replies from 0
+2021/03/17 21:31:46 Node 1 bought fish from seller node 0
+2021/03/17 21:31:46 💰💰💰 Node 0 sold fish to 1, amount remaining 5 💰💰💰
+2021/03/17 21:31:46 Node 1 Received replies from 0
+2021/03/17 21:31:46 Node 1 bought fish from seller node 0
+2021/03/17 21:31:46 💰💰💰 Node 0 sold fish to 1, amount remaining 4 💰💰💰
+2021/03/17 21:31:46 Node 1 Received replies from 0
+2021/03/17 21:31:46 Node 1 bought fish from seller node 0
+2021/03/17 21:31:46 💰💰💰 Node 0 sold fish to 1, amount remaining 3 💰💰💰
+2021/03/17 21:31:46 Node 1 Received replies from 0
+2021/03/17 21:31:46 Node 1 bought fish from seller node 0
+2021/03/17 21:31:46 💰💰💰 Node 0 sold fish to 1, amount remaining 2 💰💰💰
+2021/03/17 21:31:47 Node 1 Received replies from 0
+2021/03/17 21:31:47 Node 1 bought fish from seller node 0
+2021/03/17 21:31:47 💰💰💰 Node 0 sold fish to 1, amount remaining 1 💰💰💰
+2021/03/17 21:31:47 Node 1 Received replies from 0
+2021/03/17 21:31:47 Node 1 bought fish from seller node 0
+2021/03/17 21:31:47 💰💰💰 Node 0 sold fish to 1, amount remaining 0 💰💰💰
+2021/03/17 21:31:47 Node 1 Received replies from 0
+2021/03/17 21:31:47 Node 1 bought fish from seller node 0
+2021/03/17 21:31:47 💰💰💰 Node 0 sold fish to 1, amount remaining 9 💰💰💰
+2021/03/17 21:31:47 Node 1 Received replies from 0
+2021/03/17 21:31:47 Node 1 bought fish from seller node 0
+2021/03/17 21:31:47 💰💰💰 Node 0 sold fish to 1, amount remaining 8 💰💰💰
+2021/03/17 21:31:47 Node 1 Received replies from 0
+2021/03/17 21:31:47 Node 1 bought fish from seller node 0
+2021/03/17 21:31:47 💰💰💰 Node 0 sold fish to 1, amount remaining 7 💰💰💰
+2021/03/17 21:31:48 Node 1 Received replies from 0
+2021/03/17 21:31:48 Node 1 bought fish from seller node 0
+2021/03/17 21:31:48 💰💰💰 Node 0 sold fish to 1, amount remaining 6 💰💰💰
+2021/03/17 21:31:48 Node 1 Received replies from 0
+2021/03/17 21:31:48 Node 1 bought fish from seller node 0
+2021/03/17 21:31:48 💰💰💰 Node 0 sold fish to 1, amount remaining 5 💰💰💰
+2021/03/17 21:31:48 Node 1 Received replies from 0
+2021/03/17 21:31:48 Node 1 bought fish from seller node 0
+2021/03/17 21:31:48 💰💰💰 Node 0 sold fish to 1, amount remaining 4 💰💰💰
+2021/03/17 21:31:48 Node 1 Received replies from 0
+2021/03/17 21:31:48 Node 1 bought fish from seller node 0
+2021/03/17 21:31:48 💰💰💰 Node 0 sold fish to 1, amount remaining 3 💰💰💰
+2021/03/17 21:31:48 Node 1 Received replies from 0
+2021/03/17 21:31:48 Node 1 bought fish from seller node 0
+2021/03/17 21:31:48 💰💰💰 Node 0 sold fish to 1, amount remaining 2 💰💰💰
+2021/03/17 21:31:49 Node 1 Received replies from 0
+2021/03/17 21:31:49 Node 1 bought fish from seller node 0
+2021/03/17 21:31:49 💰💰💰 Node 0 sold fish to 1, amount remaining 1 💰💰💰
+2021/03/17 21:31:49 Node 1 Received replies from 0
+2021/03/17 21:31:49 Node 1 bought fish from seller node 0
+2021/03/17 21:31:49 💰💰💰 Node 0 sold fish to 1, amount remaining 0 💰💰💰
+2021/03/17 21:31:49 Node 1 Received replies from 0
+2021/03/17 21:31:49 Node 1 bought fish from seller node 0
+2021/03/17 21:31:49 💰💰💰 Node 0 sold fish to 1, amount remaining 9 💰💰💰
+2021/03/17 21:31:49 Node 1 Received replies from 0
+2021/03/17 21:31:49 Node 1 bought fish from seller node 0
+2021/03/17 21:31:49 💰💰💰 Node 0 sold fish to 1, amount remaining 8 💰💰💰
+2021/03/17 21:31:49 Node 1 Received replies from 0
+2021/03/17 21:31:49 Node 1 bought fish from seller node 0
+2021/03/17 21:31:49 💰💰💰 Node 0 sold fish to 1, amount remaining 7 💰💰💰
+2021/03/17 21:31:50 Node 1 Received replies from 0
+2021/03/17 21:31:50 Node 1 bought fish from seller node 0
+2021/03/17 21:31:50 💰💰💰 Node 0 sold fish to 1, amount remaining 6 💰💰💰
+2021/03/17 21:31:50 👽👽👽 Average Local RPC Latency of peer 1： 0.000378 👽👽👽
+2021/03/17 21:31:50 Node 1 Received replies from 0
+2021/03/17 21:31:50 Node 1 bought fish from seller node 0
+2021/03/17 21:31:50 💰💰💰 Node 0 sold fish to 1, amount remaining 5 💰💰💰
+2021/03/17 21:31:50 Node 1 Received replies from 0
+2021/03/17 21:31:50 Node 1 bought fish from seller node 0
+2021/03/17 21:31:50 💰💰💰 Node 0 sold fish to 1, amount remaining 4 💰💰💰
+2021/03/17 21:31:50 Node 1 Received replies from 0
+2021/03/17 21:31:50 Node 1 bought fish from seller node 0
+2021/03/17 21:31:50 💰💰💰 Node 0 sold fish to 1, amount remaining 3 💰💰💰
+2021/03/17 21:31:50 Node 1 Received replies from 0
+2021/03/17 21:31:50 Node 1 bought fish from seller node 0
+2021/03/17 21:31:50 💰💰💰 Node 0 sold fish to 1, amount remaining 2 💰💰💰
+2021/03/17 21:31:51 Node 1 Received replies from 0
+2021/03/17 21:31:51 Node 1 bought fish from seller node 0
+2021/03/17 21:31:51 💰💰💰 Node 0 sold fish to 1, amount remaining 1 💰💰💰
+2021/03/17 21:31:51 Node 1 Received replies from 0
+2021/03/17 21:31:51 Node 1 bought fish from seller node 0
+2021/03/17 21:31:51 💰💰💰 Node 0 sold fish to 1, amount remaining 0 💰💰💰
+2021/03/17 21:31:51 Node 1 Received replies from 0
+2021/03/17 21:31:51 Node 1 bought fish from seller node 0
+2021/03/17 21:31:51 💰💰💰 Node 0 sold fish to 1, amount remaining 9 💰💰💰
+2021/03/17 21:31:51 Node 1 Received replies from 0
+2021/03/17 21:31:51 Node 1 bought fish from seller node 0
+2021/03/17 21:31:51 💰💰💰 Node 0 sold fish to 1, amount remaining 8 💰💰💰
+2021/03/17 21:31:51 Node 1 Received replies from 0
+2021/03/17 21:31:51 Node 1 bought fish from seller node 0
+2021/03/17 21:31:51 💰💰💰 Node 0 sold fish to 1, amount remaining 7 💰💰💰
+2021/03/17 21:31:52 Node 1 Received replies from 0
+2021/03/17 21:31:52 Node 1 bought fish from seller node 0
+2021/03/17 21:31:52 💰💰💰 Node 0 sold fish to 1, amount remaining 6 💰💰💰
+2021/03/17 21:31:52 Node 1 Received replies from 0
+2021/03/17 21:31:52 Node 1 bought fish from seller node 0
+2021/03/17 21:31:52 💰💰💰 Node 0 sold fish to 1, amount remaining 5 💰💰💰
+2021/03/17 21:31:52 Node 1 Received replies from 0
+2021/03/17 21:31:52 Node 1 bought fish from seller node 0
+2021/03/17 21:31:52 💰💰💰 Node 0 sold fish to 1, amount remaining 4 💰💰💰
+2021/03/17 21:31:52 Node 1 Received replies from 0
+2021/03/17 21:31:52 Node 1 bought fish from seller node 0
+2021/03/17 21:31:52 💰💰💰 Node 0 sold fish to 1, amount remaining 3 💰💰💰
+2021/03/17 21:31:52 Node 1 Received replies from 0
+2021/03/17 21:31:52 Node 1 bought fish from seller node 0
+2021/03/17 21:31:52 💰💰💰 Node 0 sold fish to 1, amount remaining 2 💰💰💰
+2021/03/17 21:31:53 Node 1 Received replies from 0
+2021/03/17 21:31:53 Node 1 bought fish from seller node 0
+2021/03/17 21:31:53 💰💰💰 Node 0 sold fish to 1, amount remaining 1 💰💰💰
+2021/03/17 21:31:53 Node 1 Received replies from 0
+2021/03/17 21:31:53 Node 1 bought fish from seller node 0
+2021/03/17 21:31:53 💰💰💰 Node 0 sold fish to 1, amount remaining 0 💰💰💰
+2021/03/17 21:31:53 Node 1 Received replies from 0
+2021/03/17 21:31:53 Node 1 bought fish from seller node 0
+2021/03/17 21:31:53 💰💰💰 Node 0 sold fish to 1, amount remaining 9 💰💰💰
+2021/03/17 21:31:53 Node 1 Received replies from 0
+2021/03/17 21:31:53 Node 1 bought fish from seller node 0
+2021/03/17 21:31:53 💰💰💰 Node 0 sold fish to 1, amount remaining 8 💰💰💰
+2021/03/17 21:31:53 Node 1 Received replies from 0
+2021/03/17 21:31:53 Node 1 bought fish from seller node 0
+2021/03/17 21:31:53 💰💰💰 Node 0 sold fish to 1, amount remaining 7 💰💰💰
+2021/03/17 21:31:54 Node 1 Received replies from 0
+2021/03/17 21:31:54 Node 1 bought fish from seller node 0
+2021/03/17 21:31:54 💰💰💰 Node 0 sold fish to 1, amount remaining 6 💰💰💰
+2021/03/17 21:31:54 Node 1 Received replies from 0
+2021/03/17 21:31:54 Node 1 bought fish from seller node 0
+2021/03/17 21:31:54 💰💰💰 Node 0 sold fish to 1, amount remaining 5 💰💰💰
+2021/03/17 21:31:54 Node 1 Received replies from 0
+2021/03/17 21:31:54 Node 1 bought fish from seller node 0
+2021/03/17 21:31:54 💰💰💰 Node 0 sold fish to 1, amount remaining 4 💰💰💰
+2021/03/17 21:31:54 Node 1 Received replies from 0
+2021/03/17 21:31:54 Node 1 bought fish from seller node 0
+2021/03/17 21:31:54 💰💰💰 Node 0 sold fish to 1, amount remaining 3 💰💰💰
+2021/03/17 21:31:54 Node 1 Received replies from 0
+2021/03/17 21:31:54 Node 1 bought fish from seller node 0
+2021/03/17 21:31:54 💰💰💰 Node 0 sold fish to 1, amount remaining 2 💰💰💰
+2021/03/17 21:31:55 👽👽👽 Average Lookup Latency of peer 1： 0.000413 👽👽👽
+2021/03/17 21:31:55 Node 1 Received replies from 0
+2021/03/17 21:31:55 Node 1 bought fish from seller node 0
+2021/03/17 21:31:55 💰💰💰 Node 0 sold fish to 1, amount remaining 1 💰💰💰
+2021/03/17 21:31:55 👽👽👽 Average Local RPC Latency of peer 0： 0.200840 👽👽👽
+2021/03/17 21:31:55 👽👽👽 Average Local RPC Latency of peer 1： 0.000396 👽👽👽
+2021/03/17 21:31:55 Node 1 Received replies from 0
+2021/03/17 21:31:55 Node 1 bought fish from seller node 0
+2021/03/17 21:31:55 💰💰💰 Node 0 sold fish to 1, amount remaining 0 💰💰💰
+2021/03/17 21:31:55 Node 1 Received replies from 0
+2021/03/17 21:31:55 Node 1 bought fish from seller node 0
+2021/03/17 21:31:55 💰💰💰 Node 0 sold fish to 1, amount remaining 9 💰💰💰
+2021/03/17 21:31:55 Node 1 Received replies from 0
+2021/03/17 21:31:55 Node 1 bought fish from seller node 0
+2021/03/17 21:31:55 💰💰💰 Node 0 sold fish to 1, amount remaining 8 💰💰💰
+2021/03/17 21:31:55 Node 1 Received replies from 0
+2021/03/17 21:31:55 Node 1 bought fish from seller node 0
+2021/03/17 21:31:55 💰💰💰 Node 0 sold fish to 1, amount remaining 7 💰💰💰
+2021/03/17 21:31:56 Node 1 Received replies from 0
+2021/03/17 21:31:56 Node 1 bought fish from seller node 0
+2021/03/17 21:31:56 💰💰💰 Node 0 sold fish to 1, amount remaining 6 💰💰💰
+2021/03/17 21:31:56 Node 1 Received replies from 0
+2021/03/17 21:31:56 Node 1 bought fish from seller node 0
+2021/03/17 21:31:56 💰💰💰 Node 0 sold fish to 1, amount remaining 5 💰💰💰
+2021/03/17 21:31:56 Node 1 Received replies from 0
+2021/03/17 21:31:56 Node 1 bought fish from seller node 0
+2021/03/17 21:31:56 💰💰💰 Node 0 sold fish to 1, amount remaining 4 💰💰💰
+2021/03/17 21:31:56 Node 1 Received replies from 0
+2021/03/17 21:31:56 Node 1 bought fish from seller node 0
+2021/03/17 21:31:56 💰💰💰 Node 0 sold fish to 1, amount remaining 3 💰💰💰
+2021/03/17 21:31:56 Node 1 Received replies from 0
+2021/03/17 21:31:56 Node 1 bought fish from seller node 0
+2021/03/17 21:31:56 💰💰💰 Node 0 sold fish to 1, amount remaining 2 💰💰💰
+2021/03/17 21:31:57 Node 1 Received replies from 0
+2021/03/17 21:31:57 Node 1 bought fish from seller node 0
+2021/03/17 21:31:57 💰💰💰 Node 0 sold fish to 1, amount remaining 1 💰💰💰
+2021/03/17 21:31:57 Node 1 Received replies from 0
+2021/03/17 21:31:57 Node 1 bought fish from seller node 0
+2021/03/17 21:31:57 💰💰💰 Node 0 sold fish to 1, amount remaining 0 💰💰💰
+2021/03/17 21:31:57 Node 1 Received replies from 0
+2021/03/17 21:31:57 Node 1 bought fish from seller node 0
+2021/03/17 21:31:57 💰💰💰 Node 0 sold fish to 1, amount remaining 9 💰💰💰
+2021/03/17 21:31:57 Node 1 Received replies from 0
+2021/03/17 21:31:57 Node 1 bought fish from seller node 0
+2021/03/17 21:31:57 💰💰💰 Node 0 sold fish to 1, amount remaining 8 💰💰💰
+2021/03/17 21:31:57 Node 1 Received replies from 0
+2021/03/17 21:31:57 Node 1 bought fish from seller node 0
+2021/03/17 21:31:57 💰💰💰 Node 0 sold fish to 1, amount remaining 7 💰💰💰
+2021/03/17 21:31:58 Node 1 Received replies from 0
+2021/03/17 21:31:58 Node 1 bought fish from seller node 0
+2021/03/17 21:31:58 💰💰💰 Node 0 sold fish to 1, amount remaining 6 💰💰💰
+2021/03/17 21:31:58 Node 1 Received replies from 0
+2021/03/17 21:31:58 Node 1 bought fish from seller node 0
+2021/03/17 21:31:58 💰💰💰 Node 0 sold fish to 1, amount remaining 5 💰💰💰
+2021/03/17 21:31:58 Node 1 Received replies from 0
+2021/03/17 21:31:58 Node 1 bought fish from seller node 0
+2021/03/17 21:31:58 💰💰💰 Node 0 sold fish to 1, amount remaining 4 💰💰💰
+2021/03/17 21:31:58 Node 1 Received replies from 0
+2021/03/17 21:31:58 Node 1 bought fish from seller node 0
+2021/03/17 21:31:58 💰💰💰 Node 0 sold fish to 1, amount remaining 3 💰💰💰
+2021/03/17 21:31:58 Node 1 Received replies from 0
+2021/03/17 21:31:58 Node 1 bought fish from seller node 0
+2021/03/17 21:31:58 💰💰💰 Node 0 sold fish to 1, amount remaining 2 💰💰💰
+2021/03/17 21:31:59 Node 1 Received replies from 0
+2021/03/17 21:31:59 Node 1 bought fish from seller node 0
+2021/03/17 21:31:59 💰💰💰 Node 0 sold fish to 1, amount remaining 1 💰💰💰
+2021/03/17 21:31:59 Node 1 Received replies from 0
+2021/03/17 21:31:59 Node 1 bought fish from seller node 0
+2021/03/17 21:31:59 💰💰💰 Node 0 sold fish to 1, amount remaining 0 💰💰💰
+2021/03/17 21:31:59 Received signal interrupt, closing listener and stopping bazaar...
+2021/03/17 21:31:59 Received signal interrupt, closing listener and stopping bazaar...
+2021/03/17 21:31:59 Closing tcp listener for [::]:10000...
+2021/03/17 21:31:59 Closing tcp listener for [::]:10001...
+2021/03/17 21:31:59 rpc.Serve: accept:accept tcp [::]:10000: use of closed network connection
+2021/03/17 21:31:59 rpc.Serve: accept:accept tcp [::]:10001: use of closed network connection
