@@ -10,6 +10,7 @@ import (
 	"net"
 	"net/rpc"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -506,7 +507,8 @@ func (bnode *BazaarNode) buyerLoop() {
 		for len(bnode.perfChannel) > 0 {
 			<-bnode.perfChannel
 		}
-		bnode.reportLatency(startTime, endTime)
+		bnode.reportLookupLatency(startTime, endTime)
+
 		var tempSellerList []nodeconfig.Peer
 		for i := 0; i < len(bnode.sellerChannel); i++ {
 			tempSellerList = append(tempSellerList, <-bnode.sellerChannel)
@@ -546,15 +548,46 @@ func (bnode *BazaarNode) buyerLoop() {
 }
 
 // reportLatency logs the average latency of RPC calls every 50 invocations
-func (bnode *BazaarNode) reportLatency(start time.Time, end time.Time) {
+func (bnode *BazaarNode) reportRPCLatency(start time.Time, end time.Time, peer string) {
+
+	peerIP := strings.Split(peer, ":")[0]
+
+	if peerIP == bnode.config.NodeIP {
+
+		durationFloat64 := end.Sub(start).Seconds()
+		bnode.config.LatencyLocal += durationFloat64
+		bnode.config.RequestCountLocal += 1
+
+		if bnode.config.RequestCountLocal%50 == 0 {
+			averageLatency := bnode.config.LatencyLocal / float64(bnode.config.RequestCountLocal)
+			log.Printf("👽👽👽 Average Local RPC Latency of peer %d： %f 👽👽👽", bnode.config.NodeID, averageLatency)
+		}
+
+	} else {
+
+		durationFloat64 := end.Sub(start).Seconds()
+		bnode.config.LatencyRemote += durationFloat64
+		bnode.config.RequestCountRemote += 1
+
+		if bnode.config.RequestCountRemote%50 == 0 {
+			averageLatency := bnode.config.LatencyRemote / float64(bnode.config.RequestCountRemote)
+			log.Printf("👽👽👽 Average Remote RPC Latency of peer %d： %f 👽👽👽", bnode.config.NodeID, averageLatency)
+		}
+
+	}
+
+}
+
+// reportLatency logs the average latency of RPC calls every 50 invocations
+func (bnode *BazaarNode) reportLookupLatency(start time.Time, end time.Time) {
 
 	durationFloat64 := end.Sub(start).Seconds()
-	bnode.config.Latency += durationFloat64
-	bnode.config.RequestCount += 1
+	bnode.config.LatencyLookup += durationFloat64
+	bnode.config.RequestCountLookup += 1
 
-	if bnode.config.RequestCount%50 == 0 {
-		averageLatency := bnode.config.Latency / float64(bnode.config.RequestCount)
-		log.Printf("[Performance] Average RPC Latency of peer %d： %f", bnode.config.NodeID, averageLatency)
+	if bnode.config.RequestCountLookup%50 == 0 {
+		averageLatency := bnode.config.LatencyLookup / float64(bnode.config.RequestCountLookup)
+		log.Printf("👽👽👽 Average Lookup Latency of peer %d： %f 👽👽👽", bnode.config.NodeID, averageLatency)
 	}
 
 }

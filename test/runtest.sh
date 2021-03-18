@@ -5,6 +5,9 @@
 # build generatenodes
 go build ../cmd/generatenodes
 
+# build binary
+(cd ../ && go build)
+
 # Parse argument to get the config yml file
 node_config=$1
 

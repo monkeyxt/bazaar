@@ -39,10 +39,22 @@ type NodeConfig struct {
 	SellerTarget string `yaml:"-"`
 
 	// Latency is the culmulative response time for all requests
-	Latency float64 `yaml:"-"`
+	LatencyLookup float64 `yaml:"-"`
 
 	// RequestCount is the number of RPC calls submitted by the client
-	RequestCount int `yaml:"-"`
+	RequestCountLookup int `yaml:"-"`
+
+	// Latency is the culmulative response time for all requests
+	LatencyRemote float64 `yaml:"-"`
+
+	// RequestCount is the number of RPC calls submitted by the client
+	RequestCountRemote int `yaml:"-"`
+
+	// Latency is the culmulative response time for all requests
+	LatencyLocal float64 `yaml:"-"`
+
+	// RequestCount is the number of RPC calls submitted by the client
+	RequestCountLocal int `yaml:"-"`
 }
 
 // ItemAmount is an item, associated amount, and an Unlimited setting. If
