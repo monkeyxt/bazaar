@@ -1,7 +1,7 @@
 K: 5
 N: 6
 maxHops: 10
-outputDir: test11nodes
+outputDir: test12nodes
 staticNodes:
   0:
     role: "buyer"
@@ -12,28 +12,37 @@ staticNodes:
     buyeroptionlist:
       - "salt"
   2:
+    role: "buyer"
+    buyeroptionlist:
+      - "salt"
+  3:
+    role: "buyer"
+    buyeroptionlist:
+      - "salt"
+  4:
+    role: "buyer"
+    buyeroptionlist:
+      - "salt"
+  5:
     role: "seller"
     items:
       - item: "salt"
         amount: 1
         unlimited: false
-  3:
-    role: "none"
-  4:
-    role: "none"
-  5:
-    role: "none"
 includeEdges:
-  - [0,2]
-  - [1,2]
-  - [3,2]
-  - [4,2]
-  - [5,2]
+  - [0,5]
+  - [1,5]
+  - [2,5]
+  - [3,5]
+  - [4,5]
 excludeEdges:
   - [0,1]
+  - [0,2]
   - [0,3]
   - [0,4]
-  - [0,5]
+  - [1,2]
   - [1,3]
   - [1,4]
-  - [1,5]
+  - [2,3]
+  - [2,4]
+  - [3,4]
