@@ -1,4 +1,4 @@
-# bazaar
+# Bazaar
 P2P bazaar for CS 677
 
 ## Requirements
