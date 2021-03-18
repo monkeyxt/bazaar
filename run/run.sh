@@ -25,11 +25,14 @@
 
 # read a list of hosts
 USERNAME=ec2-user
-HOSTS=("54.172.102.164" "54.144.240.179")
+HOSTS=("54.172.102.164" "54.144.240.179" "34.202.157.206")
 KEY=lab1.pem
 # USERNAME=ubuntu
 # HOSTS=("54.225.31.11" "107.20.63.186")
 # KEY=~/.aws/677kp.pem
+
+# build binary
+(cd ../ && go build)
 
 # scp repo & install dependencies
 for HOSTNAME in ${HOSTS[@]}; do
@@ -54,6 +57,7 @@ go get -v ../...
 echo "building generatenodes..."
 go build ../cmd/generatenodes
 node_config=$1
+
 
 node_folder=$(grep -A0 'outputDir:' $1 | awk '{ print $2}')
 echo $node_folder
