@@ -27,16 +27,12 @@ type BazaarNode struct {
 	// communicating with that peer.
 	peerClients    map[int]*rpc.Client
 	peerClientLock *sync.Mutex
-
 	VerboseLogging bool
-	perfChannel    chan time.Time
-
-	PerfLogger *log.Logger
-	lookupUUID int
-	uuidLock   *sync.Mutex
-
-	perfMap  map[int][]time.Time
-	perfLock *sync.Mutex
+	PerfLogger     *log.Logger
+	lookupUUID     int
+	uuidLock       *sync.Mutex
+	perfMap        map[int][]time.Time
+	perfLock       *sync.Mutex
 }
 
 // BazaarServer exposes methods for letting a node listen for RPC
@@ -58,43 +54,6 @@ func SeedMathRand() error {
 	rand.Seed(int64(seed))
 
 	return nil
-}
-
-// AddLookupTime given the uuid, adds the current time to the perf map.
-func (bnode *BazaarNode) AddLookupTime(uuid int) {
-	end := time.Now()
-	bnode.perfLock.Lock()
-	_, ok := bnode.perfMap[uuid]
-	if !ok {
-		bnode.perfMap[uuid] = []time.Time{}
-	}
-	timeList := bnode.perfMap[uuid]
-	timeList = append(timeList, end)
-	bnode.perfMap[uuid] = timeList
-
-	bnode.perfLock.Unlock()
-}
-
-// GetEarliestLookup gets the earliest time for the given uuid
-func (bnode *BazaarNode) GetEarliestLookup(uuid int) (time.Time, error) {
-	var earliest time.Time
-	bnode.perfLock.Lock()
-	defer bnode.perfLock.Unlock()
-	if len(bnode.perfMap[uuid]) == 0 {
-		return time.Time{}, fmt.Errorf("error getting the earliest time, no replies have been received")
-	}
-	earliest = bnode.perfMap[uuid][0]
-	return earliest, nil
-}
-
-// GetLookupUUID generates a lookup uuid. This is thread safe.
-func (bnode *BazaarNode) GetLookupUUID() int {
-	var uuid int
-	bnode.uuidLock.Lock()
-	uuid = bnode.lookupUUID
-	bnode.lookupUUID++
-	bnode.uuidLock.Unlock()
-	return uuid
 }
 
 // CreateNodeFromConfigFile loads initial node state from a config file passed as
@@ -170,7 +129,6 @@ func CreateNodeFromConfigFile(configFile []byte) (*BazaarNode, error) {
 
 	// initialize the seller channel, just have 100 max for now
 	node.sellerChannel = make(chan nodeconfig.Peer, 100)
-	node.perfChannel = make(chan time.Time)
 
 	return &node, nil
 }
@@ -358,9 +316,6 @@ func (bnode *BazaarNode) reply(routeList []nodeconfig.Peer, sellerInfo nodeconfi
 		// log.Printf("Node %d got a match reply from node %d ", bnode.config.NodeID, sellerInfo.PeerID)
 
 		// first seller
-		if len(bnode.perfChannel) == 0 {
-			bnode.perfChannel <- time.Now()
-		}
 		bnode.sellerChannel <- nodeconfig.Peer{PeerID: sellerInfo.PeerID, Addr: sellerInfo.Addr}
 
 	} else {

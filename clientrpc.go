@@ -120,3 +120,40 @@ func (bnode *BazaarNode) callLookupRPC(route []nodeconfig.Peer, lookupPeer nodec
 	bnode.reportRPCLatency(start, end, lookupPeer.Addr)
 
 }
+
+// AddLookupTime given the uuid, adds the current time to the perf map.
+func (bnode *BazaarNode) AddLookupTime(uuid int) {
+	end := time.Now()
+	bnode.perfLock.Lock()
+	_, ok := bnode.perfMap[uuid]
+	if !ok {
+		bnode.perfMap[uuid] = []time.Time{}
+	}
+	timeList := bnode.perfMap[uuid]
+	timeList = append(timeList, end)
+	bnode.perfMap[uuid] = timeList
+
+	bnode.perfLock.Unlock()
+}
+
+// GetEarliestLookup gets the earliest time for the given uuid
+func (bnode *BazaarNode) GetEarliestLookup(uuid int) (time.Time, error) {
+	var earliest time.Time
+	bnode.perfLock.Lock()
+	defer bnode.perfLock.Unlock()
+	if len(bnode.perfMap[uuid]) == 0 {
+		return time.Time{}, fmt.Errorf("error getting the earliest time, no replies have been received")
+	}
+	earliest = bnode.perfMap[uuid][0]
+	return earliest, nil
+}
+
+// GetLookupUUID generates a lookup uuid. This is thread safe.
+func (bnode *BazaarNode) GetLookupUUID() int {
+	var uuid int
+	bnode.uuidLock.Lock()
+	uuid = bnode.lookupUUID
+	bnode.lookupUUID++
+	bnode.uuidLock.Unlock()
+	return uuid
+}

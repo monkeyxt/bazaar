@@ -39,6 +39,7 @@ trap kill_bazaars INT TERM EXIT
 yamls=`ls "$node_folder"/*.yml`
 for file in $yamls
 do
+    # ../bazaar --config $file --verbose & pids+=( $! )
     ../bazaar --config $file & pids+=( $! )
 done
 
