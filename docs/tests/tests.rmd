@@ -208,6 +208,34 @@ grViz("
  ")
 ```
 
+# Test 7
+
+Test Description: Stress test for larger networks with 5 buyers and 5 sellers for each item, and 20 additional generated nodes. See `test\test7config.yml` for more details.
+
+\noindent Program Behaviors: Transactions goes smoothly between peers. No wrong items are sold or bought.
+
+# Test 8
+
+Test Description: Stress test for larger networks with random nodes, with 50 generated nodes. See `test\test8config.yml` for more details.
+\newline
+
+\noindent Program Behaviors: Network random generation is successful. Transactions goes smoothly between peers. No wrong items are sold or bought.
+
+# Test 9
+
+Test Description: Assign two nodes to have no role. Ensure that attempts are made to buy or sell. See `test\test9config.yml` for more details.
+\newline
+
+\noindent Program Behaviors: Network generation successful. No items are ever sold.
+
+# Test 10
+Test Description:  Stress test for many nodes with multiple items. 30 static nodes and 20 generated nodes For each single good there are two buyers, an unlimited seller and a seller with 10 stock. For each pair of goods there are two buyers, an unlimited seller and a seller with 10 stock. For all three goods there are three buyers and three unlimited sellers. See `test\test10config.yml` for more details.
+\newline
+
+\noindent Program Behaviors: Network random generation is successful. Transactions goes smoothly between peers. No wrong items are sold or bought.
+
+
+
 <!--
 # References
 \setlength{\parindent}{-0.2in}

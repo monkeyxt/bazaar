@@ -54,7 +54,7 @@ library(DiagrammeR)
 
 Our implementation of the system made use of `golang` and the default go `rpc` package to allow remote procedure calls between peers. We choose Go mainly for two reasons. In the first place, Go is more efficient than Java since it is directly compiled to machine code whereas Java has to be reduced to bytecode by JVM before it can be compiled to machine code, and it also has a a better garbage collection mechanism. More importantly, Go is designed for simplicity and scalability, especially in its multithreading abilities which smoothly handles concurrent processes with its `goroutines`. The amount of concurrency involved in this project makes Go, in our opinion, the most suitable language for this project.
 
-Here we give a brief bird eye view of the system - the node network could either be randomly generated or specified through a network configuration file (templates can be found in the `test` directory). When it is randomly generated, the system takes in an arbitrary `N` and `k` where `N` is the number of nodes and `k` is the maximum number of neighbors each peer can have. It then forms a structured network and spawns a configuration file for each node to run on. Peers are randomly initialized to be one of the four roles: buyer, seller, both or none. The desired good and inventory, and the amount for each is also randomly initialized for each peer. Buyers then continuously send look-up requests to their neighbors for their targeted product, while sellers listens for requests, responds and sells products.
+Here we give a brief bird eye view of the system - the node network could either be randomly generated or specified through a network configuration file (templates can be found in the `test` directory). When it is randomly generated, the system takes in an arbitrary `N` and `k` in a configuration file where `N` is the number of nodes and `k` is the maximum number of neighbors each peer can have. It then forms a structured network and spawns a configuration file for each node to run on. Peers are randomly initialized to be one of the four roles: buyer, seller, both or none. The desired good and inventory, and the amount for each is also randomly initialized for each peer. Buyers then continuously send look-up requests to their neighbors for their targeted product, while sellers listens for requests, responds and sells products.
 
 In terms of specific implementation, we followed the component structure and interfaces as given in the lab specification. Below, we describe in details each component and how each component accomplishes its intended functions, as well as additional features.
 
@@ -88,19 +88,38 @@ Because of time constraints, there are several features that we did not implemen
 
 # How to Run
 
-To run specified tests, navigate to the `test` folder and use the bash script `runtest.sh` to run the desired network configuration. The user can also create their own `.yml` network configuration files based on the template give in the `test` directory. 
+To run all fo the designed tests, navigate to the `test` folder and
+```{}
+# for local testing
+$ bash testall.sh
+
+# for remote resting
+$ bash testallremote.sh
+```
+
+\noindent To run specified tests locally, navigate to the `test` folder and use the bash script `runtest.sh` to run the desired network configuration. The user can also create their own `.yml` network configuration files based on the template give in the `test` directory. 
 ```{}
 $ bash runtest.sh <config>.yml
 ```
 
-\noindent To run the system with arbitrary `N` and `k` parameters, navigate to the `run` directory and use the bash script `run.sh` which automatically deploys the source code to the specified machines, install dependencies on the machines and sets up remotely the nodes to run.
-
+\noindent To run specified tests remotely, navigate to the `run` folder and use the bash script `run.sh` to run the desired network configuration.
 ```{}
 $ bash run.sh <config>.yml
-$ bash run.sh -N -k
 ```
 
-\noindent To terminate the process on all machines, send `ctrl+c` to the script and it will terminate all running pids of node instances on each remote machine. 
+\noindent To run the system with arbitrary `N` and `k` parameters, create a `.yml` file like the one below and use `run.sh` to run it remotely or `runtest.sh` to run it locally.
+
+```{}
+K: 7
+N: 50
+maxHops: 7
+outputDir: test8nodes
+```
+
+\noindent To terminate the process on all machines, send `ctrl+c` to the script and it will terminate all running pids of node instances on each remote machine.
+\newline
+
+\noindent If the program is run locally output logs for each node will be dumped in the working directory. If the program is run remotely, logs for each node is dumped on the machine it is running on. Each time a new tests run the old logs are cleared. `ssh` into different machines to view the output logs.
 
 <!--
 # References
