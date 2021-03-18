@@ -20,10 +20,14 @@
 # IPs (0.0.0.0/0), or at least the default security group. This just opens up
 # every port.
 # Finally, run this script and see what happens!
+# Remember to pass the config file you wish to use as a parameter to this script
+# Example: 'bash run.sh config.yml'
 
 # read a list of hosts
 USERNAME=ubuntu
 HOSTS=("3.89.254.207" "54.235.60.16")
+USERNAME=ec2-user
+HOSTS=("54.172.102.164" "54.144.240.179") # "34.202.157.206" "54.197.206.230" "100.24.244.33" "3.93.163.99")
 KEY=lab1.pem
 # USERNAME=ubuntu
 # HOSTS=("54.225.31.11" "107.20.63.186")
