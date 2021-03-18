@@ -35,3 +35,6 @@ bash run.sh ../test/test9config.yml
 
 echo "Running test 10..."
 bash run.sh ../test/test10config.yml
+
+echo "Running test 11..."
+bash run.sh ../test/test11config.yml

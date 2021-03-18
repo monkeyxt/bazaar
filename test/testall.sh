@@ -30,3 +30,6 @@ timeout 30s bash runtest.sh test9config.yml
 
 echo "Running test 10..."
 timeout 30s bash runtest.sh test10config.yml
+
+echo "Running test 11..."
+timeout 30s bash runtest.sh test11config.yml

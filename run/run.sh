@@ -24,8 +24,8 @@
 # Example: 'bash run.sh config.yml'
 
 # read a list of hosts
-USERNAME=ubuntu
-HOSTS=("3.89.254.207" "54.235.60.16")
+USERNAME=ec2-user
+HOSTS=("54.172.102.164" "54.144.240.179")
 KEY=lab1.pem
 # USERNAME=ubuntu
 # HOSTS=("54.225.31.11" "107.20.63.186")
@@ -33,6 +33,7 @@ KEY=lab1.pem
 
 # scp repo & install dependencies
 for HOSTNAME in ${HOSTS[@]}; do
+  ssh -i $KEY -l ${USERNAME} ${HOSTNAME} "rm *.txt"
   echo "Current Server: "$HOSTNAME
   ssh -i $KEY -l ${USERNAME} ${HOSTNAME} "mkdir bazaar"
   scp -i $KEY -r ../../bazaar/* $USERNAME@$HOSTNAME:~/bazaar
