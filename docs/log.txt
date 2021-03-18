@@ -1,0 +1,272 @@
+2021/03/18 00:07:05 Listening on port 10004 for incoming RPC connections...
+2021/03/18 00:07:05 Listening on port 10003 for incoming RPC connections...
+2021/03/18 00:07:05 Listening on port 10000 for incoming RPC connections...
+2021/03/18 00:07:05 Listening on port 10001 for incoming RPC connections...
+2021/03/18 00:07:05 Listening on port 10005 for incoming RPC connections...
+2021/03/18 00:07:05 rpc.Register: method "AddLookupTime" has 2 input parameters; needs exactly three
+2021/03/18 00:07:05 rpc.Register: method "AddLookupTime" has 2 input parameters; needs exactly three
+2021/03/18 00:07:05 rpc.Register: method "AddLookupTime" has 2 input parameters; needs exactly three
+2021/03/18 00:07:05 rpc.Register: method "AddLookupTime" has 2 input parameters; needs exactly three
+2021/03/18 00:07:05 rpc.Register: method "GetEarliestLookup" has 2 input parameters; needs exactly three
+2021/03/18 00:07:05 rpc.Register: method "GetEarliestLookup" has 2 input parameters; needs exactly three
+2021/03/18 00:07:05 rpc.Register: method "GetEarliestLookup" has 2 input parameters; needs exactly three
+2021/03/18 00:07:05 rpc.Register: method "GetEarliestLookup" has 2 input parameters; needs exactly three
+2021/03/18 00:07:05 rpc.Register: method "GetLookupUUID" has 1 input parameters; needs exactly three
+2021/03/18 00:07:05 rpc.Register: method "AddLookupTime" has 2 input parameters; needs exactly three
+2021/03/18 00:07:05 rpc.Register: method "GetLookupUUID" has 1 input parameters; needs exactly three
+2021/03/18 00:07:05 rpc.Register: method "GetLookupUUID" has 1 input parameters; needs exactly three
+2021/03/18 00:07:05 rpc.Register: method "GetLookupUUID" has 1 input parameters; needs exactly three
+2021/03/18 00:07:05 rpc.Register: method "GetEarliestLookup" has 2 input parameters; needs exactly three
+2021/03/18 00:07:05 Node 0 listening for rpc on address :10004
+2021/03/18 00:07:05 Listening on port 10002 for incoming RPC connections...
+2021/03/18 00:07:05 Node 4 listening for rpc on address :10001
+2021/03/18 00:07:05 rpc.Register: method "GetLookupUUID" has 1 input parameters; needs exactly three
+2021/03/18 00:07:05 Node 2 listening for rpc on address :10000
+2021/03/18 00:07:05 Node 1 listening for rpc on address :10003
+2021/03/18 00:07:05 Node 3 listening for rpc on address :10005
+2021/03/18 00:07:05 rpc.Register: method "AddLookupTime" has 2 input parameters; needs exactly three
+2021/03/18 00:07:05 rpc.Register: method "GetEarliestLookup" has 2 input parameters; needs exactly three
+2021/03/18 00:07:05 rpc.Register: method "GetLookupUUID" has 1 input parameters; needs exactly three
+2021/03/18 00:07:05 Node 5 listening for rpc on address :10002
+2021/03/18 00:07:10 Node 2 Received replies from 3
+2021/03/18 00:07:10 Node 0 Received replies from 3
+2021/03/18 00:07:10 Node 2 bought salt from seller node 3
+2021/03/18 00:07:10 Node 0 bought salt from seller node 3
+2021/03/18 00:07:10 Node 1 Received replies from 3
+2021/03/18 00:07:10 Node 1 bought salt from seller node 3
+2021/03/18 00:07:10 💰💰💰 Node 3 sold salt to 2, amount remaining 0 💰💰💰
+2021/03/18 00:07:10 Seller node 3 is out of items!
+2021/03/18 00:07:10 Seller node 3 is out of items!
+2021/03/18 00:07:10 Node 2 Received replies from 3
+2021/03/18 00:07:10 Node 0 Received replies from 3
+2021/03/18 00:07:10 Node 2 bought salt from seller node 3
+2021/03/18 00:07:10 Node 0 bought salt from seller node 3
+2021/03/18 00:07:10 Node 1 Received replies from 3
+2021/03/18 00:07:10 Node 1 bought salt from seller node 3
+2021/03/18 00:07:10 Seller node 3 is out of items!
+2021/03/18 00:07:10 Seller node 3 is out of items!
+2021/03/18 00:07:10 Seller node 3 is out of items!
+2021/03/18 00:07:10 Node 0 Received replies from 3
+2021/03/18 00:07:10 Node 2 Received replies from 3
+2021/03/18 00:07:10 Node 1 Received replies from 3
+2021/03/18 00:07:10 Node 0 bought salt from seller node 3
+2021/03/18 00:07:10 Node 1 bought salt from seller node 3
+2021/03/18 00:07:10 Node 2 bought salt from seller node 3
+2021/03/18 00:07:10 Seller node 3 is out of items!
+2021/03/18 00:07:10 Seller node 3 is out of items!
+2021/03/18 00:07:10 Seller node 3 is out of items!
+2021/03/18 00:07:11 Node 0 Received replies from 3
+2021/03/18 00:07:11 Node 0 bought salt from seller node 3
+2021/03/18 00:07:11 Node 1 Received replies from 3
+2021/03/18 00:07:11 Node 1 bought salt from seller node 3
+2021/03/18 00:07:11 Node 2 Received replies from 3
+2021/03/18 00:07:11 Node 2 bought salt from seller node 3
+2021/03/18 00:07:11 Seller node 3 is out of items!
+2021/03/18 00:07:11 Seller node 3 is out of items!
+2021/03/18 00:07:11 Seller node 3 is out of items!
+2021/03/18 00:07:11 Node 0 Received replies from 3
+2021/03/18 00:07:11 Node 0 bought salt from seller node 3
+2021/03/18 00:07:11 Node 1 Received replies from 3
+2021/03/18 00:07:11 Node 2 Received replies from 3
+2021/03/18 00:07:11 Node 1 bought salt from seller node 3
+2021/03/18 00:07:11 Node 2 bought salt from seller node 3
+2021/03/18 00:07:11 Seller node 3 is out of items!
+2021/03/18 00:07:11 Seller node 3 is out of items!
+2021/03/18 00:07:11 Seller node 3 is out of items!
+2021/03/18 00:07:11 Node 0 Received replies from 3
+2021/03/18 00:07:11 Node 0 bought salt from seller node 3
+2021/03/18 00:07:11 Node 2 Received replies from 3
+2021/03/18 00:07:11 Node 1 Received replies from 3
+2021/03/18 00:07:11 Node 2 bought salt from seller node 3
+2021/03/18 00:07:11 Node 1 bought salt from seller node 3
+2021/03/18 00:07:11 Seller node 3 is out of items!
+2021/03/18 00:07:11 Seller node 3 is out of items!
+2021/03/18 00:07:11 Seller node 3 is out of items!
+2021/03/18 00:07:11 Node 2 Received replies from 3
+2021/03/18 00:07:11 Node 1 Received replies from 3
+2021/03/18 00:07:11 Node 1 bought salt from seller node 3
+2021/03/18 00:07:11 Node 2 bought salt from seller node 3
+2021/03/18 00:07:11 Node 0 Received replies from 3
+2021/03/18 00:07:11 Node 0 bought salt from seller node 3
+2021/03/18 00:07:11 Seller node 3 is out of items!
+2021/03/18 00:07:11 Seller node 3 is out of items!
+2021/03/18 00:07:11 Seller node 3 is out of items!
+2021/03/18 00:07:11 Node 1 Received replies from 3
+2021/03/18 00:07:11 Node 2 Received replies from 3
+2021/03/18 00:07:11 Node 1 bought salt from seller node 3
+2021/03/18 00:07:11 Node 0 Received replies from 3
+2021/03/18 00:07:11 Node 2 bought salt from seller node 3
+2021/03/18 00:07:11 Node 0 bought salt from seller node 3
+2021/03/18 00:07:11 Seller node 3 is out of items!
+2021/03/18 00:07:11 Seller node 3 is out of items!
+2021/03/18 00:07:11 Seller node 3 is out of items!
+2021/03/18 00:07:12 Node 2 Received replies from 3
+2021/03/18 00:07:12 Node 1 Received replies from 3
+2021/03/18 00:07:12 Node 2 bought salt from seller node 3
+2021/03/18 00:07:12 Node 1 bought salt from seller node 3
+2021/03/18 00:07:12 Node 0 Received replies from 3
+2021/03/18 00:07:12 Node 0 bought salt from seller node 3
+2021/03/18 00:07:12 Seller node 3 is out of items!
+2021/03/18 00:07:12 Seller node 3 is out of items!
+2021/03/18 00:07:12 Seller node 3 is out of items!
+2021/03/18 00:07:12 Node 2 Received replies from 3
+2021/03/18 00:07:12 Node 2 bought salt from seller node 3
+2021/03/18 00:07:12 Node 1 Received replies from 3
+2021/03/18 00:07:12 Node 1 bought salt from seller node 3
+2021/03/18 00:07:12 Node 0 Received replies from 3
+2021/03/18 00:07:12 Node 0 bought salt from seller node 3
+2021/03/18 00:07:12 Seller node 3 is out of items!
+2021/03/18 00:07:12 Seller node 3 is out of items!
+2021/03/18 00:07:12 Seller node 3 is out of items!
+2021/03/18 00:07:12 Node 2 Received replies from 3
+2021/03/18 00:07:12 Node 2 bought salt from seller node 3
+2021/03/18 00:07:12 Node 0 Received replies from 3
+2021/03/18 00:07:12 Node 1 Received replies from 3
+2021/03/18 00:07:12 Node 0 bought salt from seller node 3
+2021/03/18 00:07:12 Node 1 bought salt from seller node 3
+2021/03/18 00:07:12 Seller node 3 is out of items!
+2021/03/18 00:07:12 Seller node 3 is out of items!
+2021/03/18 00:07:12 Seller node 3 is out of items!
+2021/03/18 00:07:12 Node 2 Received replies from 3
+2021/03/18 00:07:12 Node 2 bought salt from seller node 3
+2021/03/18 00:07:12 Node 0 Received replies from 3
+2021/03/18 00:07:12 Node 1 Received replies from 3
+2021/03/18 00:07:12 Node 0 bought salt from seller node 3
+2021/03/18 00:07:12 Node 1 bought salt from seller node 3
+2021/03/18 00:07:12 Seller node 3 is out of items!
+2021/03/18 00:07:12 Seller node 3 is out of items!
+2021/03/18 00:07:12 Seller node 3 is out of items!
+2021/03/18 00:07:12 Node 2 Received replies from 3
+2021/03/18 00:07:12 Node 0 Received replies from 3
+2021/03/18 00:07:12 Node 1 Received replies from 3
+2021/03/18 00:07:12 Node 1 bought salt from seller node 3
+2021/03/18 00:07:12 Node 2 bought salt from seller node 3
+2021/03/18 00:07:12 Node 0 bought salt from seller node 3
+2021/03/18 00:07:12 Seller node 3 is out of items!
+2021/03/18 00:07:12 Seller node 3 is out of items!
+2021/03/18 00:07:12 Seller node 3 is out of items!
+2021/03/18 00:07:13 Node 1 Received replies from 3
+2021/03/18 00:07:13 Node 2 Received replies from 3
+2021/03/18 00:07:13 Node 0 Received replies from 3
+2021/03/18 00:07:13 Node 1 bought salt from seller node 3
+2021/03/18 00:07:13 Node 0 bought salt from seller node 3
+2021/03/18 00:07:13 Node 2 bought salt from seller node 3
+2021/03/18 00:07:13 Seller node 3 is out of items!
+2021/03/18 00:07:13 Seller node 3 is out of items!
+2021/03/18 00:07:13 Seller node 3 is out of items!
+2021/03/18 00:07:13 Node 0 Received replies from 3
+2021/03/18 00:07:13 Node 0 bought salt from seller node 3
+2021/03/18 00:07:13 Node 2 Received replies from 3
+2021/03/18 00:07:13 Node 2 bought salt from seller node 3
+2021/03/18 00:07:13 Node 1 Received replies from 3
+2021/03/18 00:07:13 Node 1 bought salt from seller node 3
+2021/03/18 00:07:13 Seller node 3 is out of items!
+2021/03/18 00:07:13 Seller node 3 is out of items!
+2021/03/18 00:07:13 Seller node 3 is out of items!
+2021/03/18 00:07:13 Node 0 Received replies from 3
+2021/03/18 00:07:13 Node 0 bought salt from seller node 3
+2021/03/18 00:07:13 Node 2 Received replies from 3
+2021/03/18 00:07:13 Node 2 bought salt from seller node 3
+2021/03/18 00:07:13 Node 1 Received replies from 3
+2021/03/18 00:07:13 Node 1 bought salt from seller node 3
+2021/03/18 00:07:13 Seller node 3 is out of items!
+2021/03/18 00:07:13 Seller node 3 is out of items!
+2021/03/18 00:07:13 Seller node 3 is out of items!
+2021/03/18 00:07:13 Node 1 Received replies from 3
+2021/03/18 00:07:13 Node 0 Received replies from 3
+2021/03/18 00:07:13 Node 2 Received replies from 3
+2021/03/18 00:07:13 Node 1 bought salt from seller node 3
+2021/03/18 00:07:13 Node 0 bought salt from seller node 3
+2021/03/18 00:07:13 Node 2 bought salt from seller node 3
+2021/03/18 00:07:13 Seller node 3 is out of items!
+2021/03/18 00:07:13 Seller node 3 is out of items!
+2021/03/18 00:07:13 Seller node 3 is out of items!
+2021/03/18 00:07:13 Node 2 Received replies from 3
+2021/03/18 00:07:13 Node 1 Received replies from 3
+2021/03/18 00:07:13 Node 2 bought salt from seller node 3
+2021/03/18 00:07:13 Node 1 bought salt from seller node 3
+2021/03/18 00:07:13 Node 0 Received replies from 3
+2021/03/18 00:07:13 Node 0 bought salt from seller node 3
+2021/03/18 00:07:13 Seller node 3 is out of items!
+2021/03/18 00:07:13 Seller node 3 is out of items!
+2021/03/18 00:07:13 Seller node 3 is out of items!
+2021/03/18 00:07:14 Node 1 Received replies from 3
+2021/03/18 00:07:14 Node 2 Received replies from 3
+2021/03/18 00:07:14 Node 0 Received replies from 3
+2021/03/18 00:07:14 Node 1 bought salt from seller node 3
+2021/03/18 00:07:14 Node 2 bought salt from seller node 3
+2021/03/18 00:07:14 Node 0 bought salt from seller node 3
+2021/03/18 00:07:14 Seller node 3 is out of items!
+2021/03/18 00:07:14 Seller node 3 is out of items!
+2021/03/18 00:07:14 Seller node 3 is out of items!
+2021/03/18 00:07:14 Node 1 Received replies from 3
+2021/03/18 00:07:14 Node 0 Received replies from 3
+2021/03/18 00:07:14 Node 2 Received replies from 3
+2021/03/18 00:07:14 Node 1 bought salt from seller node 3
+2021/03/18 00:07:14 Node 0 bought salt from seller node 3
+2021/03/18 00:07:14 Node 2 bought salt from seller node 3
+2021/03/18 00:07:14 Seller node 3 is out of items!
+2021/03/18 00:07:14 Seller node 3 is out of items!
+2021/03/18 00:07:14 Seller node 3 is out of items!
+2021/03/18 00:07:14 Node 0 Received replies from 3
+2021/03/18 00:07:14 Node 1 Received replies from 3
+2021/03/18 00:07:14 Node 2 Received replies from 3
+2021/03/18 00:07:14 Node 0 bought salt from seller node 3
+2021/03/18 00:07:14 Node 1 bought salt from seller node 3
+2021/03/18 00:07:14 Node 2 bought salt from seller node 3
+2021/03/18 00:07:14 Seller node 3 is out of items!
+2021/03/18 00:07:14 Seller node 3 is out of items!
+2021/03/18 00:07:14 Seller node 3 is out of items!
+2021/03/18 00:07:14 Node 0 Received replies from 3
+2021/03/18 00:07:14 Node 0 bought salt from seller node 3
+2021/03/18 00:07:14 Node 1 Received replies from 3
+2021/03/18 00:07:14 Node 1 bought salt from seller node 3
+2021/03/18 00:07:14 Node 2 Received replies from 3
+2021/03/18 00:07:14 Node 2 bought salt from seller node 3
+2021/03/18 00:07:14 Seller node 3 is out of items!
+2021/03/18 00:07:14 Seller node 3 is out of items!
+2021/03/18 00:07:14 Seller node 3 is out of items!
+2021/03/18 00:07:14 Node 0 Received replies from 3
+2021/03/18 00:07:14 Node 1 Received replies from 3
+2021/03/18 00:07:14 Node 0 bought salt from seller node 3
+2021/03/18 00:07:14 Node 1 bought salt from seller node 3
+2021/03/18 00:07:14 Node 2 Received replies from 3
+2021/03/18 00:07:14 Node 2 bought salt from seller node 3
+2021/03/18 00:07:14 Seller node 3 is out of items!
+2021/03/18 00:07:14 Seller node 3 is out of items!
+2021/03/18 00:07:14 Seller node 3 is out of items!
+2021/03/18 00:07:15 Node 2 Received replies from 3
+2021/03/18 00:07:15 Node 0 Received replies from 3
+2021/03/18 00:07:15 Node 1 Received replies from 3
+2021/03/18 00:07:15 Node 2 bought salt from seller node 3
+2021/03/18 00:07:15 Node 0 bought salt from seller node 3
+2021/03/18 00:07:15 Node 1 bought salt from seller node 3
+2021/03/18 00:07:15 Seller node 3 is out of items!
+2021/03/18 00:07:15 Seller node 3 is out of items!
+2021/03/18 00:07:15 Seller node 3 is out of items!
+2021/03/18 00:07:15 Node 0 Received replies from 3
+2021/03/18 00:07:15 Node 2 Received replies from 3
+2021/03/18 00:07:15 Node 1 Received replies from 3
+2021/03/18 00:07:15 Node 0 bought salt from seller node 3
+2021/03/18 00:07:15 Node 2 bought salt from seller node 3
+2021/03/18 00:07:15 Node 1 bought salt from seller node 3
+2021/03/18 00:07:15 Seller node 3 is out of items!
+2021/03/18 00:07:15 Seller node 3 is out of items!
+2021/03/18 00:07:15 Seller node 3 is out of items!
+2021/03/18 00:07:15 Received signal interrupt, closing listener and stopping bazaar...
+2021/03/18 00:07:15 Received signal interrupt, closing listener and stopping bazaar...
+2021/03/18 00:07:15 Received signal interrupt, closing listener and stopping bazaar...
+2021/03/18 00:07:15 Received signal interrupt, closing listener and stopping bazaar...
+2021/03/18 00:07:15 Closing tcp listener for [::]:10001...
+2021/03/18 00:07:15 Received signal interrupt, closing listener and stopping bazaar...
+2021/03/18 00:07:15 Closing tcp listener for [::]:10004...
+2021/03/18 00:07:15 Closing tcp listener for [::]:10000...
+2021/03/18 00:07:15 Closing tcp listener for [::]:10003...
+2021/03/18 00:07:15 rpc.Serve: accept:accept tcp [::]:10001: use of closed network connection
+2021/03/18 00:07:15 rpc.Serve: accept:accept tcp [::]:10000: use of closed network connection
+2021/03/18 00:07:15 Closing tcp listener for [::]:10005...
+2021/03/18 00:07:15 rpc.Serve: accept:accept tcp [::]:10003: use of closed network connection
+2021/03/18 00:07:15 rpc.Serve: accept:accept tcp [::]:10005: use of closed network connection
+2021/03/18 00:07:15 Received signal interrupt, closing listener and stopping bazaar...
+2021/03/18 00:07:15 Closing tcp listener for [::]:10002...
+2021/03/18 00:07:15 rpc.Serve: accept:accept tcp [::]:10002: use of closed network connection

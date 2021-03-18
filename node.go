@@ -548,7 +548,7 @@ func (bnode *BazaarNode) buyerLoop() {
 
 			randomSeller := sellerList[rand.Intn(len(sellerList))]
 			go bnode.buy(randomSeller)
-			log.Printf("Node %d bought %s from seller node %d", bnode.config.NodeID, bnode.config.BuyerTarget, randomSeller.PeerID)
+			log.Printf("Node %d is trying to buy %s from seller node %d", bnode.config.NodeID, bnode.config.BuyerTarget, randomSeller.PeerID)
 		}
 
 	}
