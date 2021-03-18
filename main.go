@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -54,6 +55,14 @@ func main() {
 	if verbose {
 		log.Printf("Loaded config for bazaar node. Node ID: %d\n", node.config.NodeID)
 	}
+
+	perfLogFile, err := os.OpenFile(fmt.Sprint("perflog", node.config.NodeID, ".txt"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	perflogger := log.New(perfLogFile, "", 0)
+	node.PerfLogger = perflogger
 
 	node.VerboseLogging = verbose
 
