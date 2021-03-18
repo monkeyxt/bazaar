@@ -116,7 +116,7 @@ function kill_bazaars() {
     # kill pids on each server
     for host in ${hostlist[*]}
     do
-      echo "Logging on to $HOSTNAME to kill bazaar node with pid ${pids[$pidcounter]}"
+      echo "Logging on to $host to kill bazaar node with pid ${pids[$pidcounter]}"
       ssh -i $KEY -l ${USERNAME} $host "kill ${pids[$pidcounter]}"
       pidcounter=$((pidcounter+1))
     done
