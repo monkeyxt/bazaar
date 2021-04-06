@@ -9,5 +9,5 @@ Run the `run.sh` script in the `run` directory to build and deploy.
 More detailed information is available in the design documents in the `docs` directory.
 
 ## How to test
-Tests can be run individually using unit tests in `test/unit`
+Unit tests can be run individually using tests in `test/unit`
 More detailed information is available in the test documents in the `docs` directory.
