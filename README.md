@@ -1,5 +1,5 @@
 # Bazaar
-P2P bazaar for CS 677
+A Bazaar-style peer-to-peer (P2P) marketplace implemented on distributed public compute nodes.
 
 ## Requirements
 [Golang](https://golang.org)
